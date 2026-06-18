@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
+import { useWishStore } from "../../store/wishesStore";
 
 const Navbar = () => {
+  const {resetWish} = useWishStore();
   return (
     <nav
       className="

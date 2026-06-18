@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useWishStore } from "../../store/wishesStore";
 
 export default function HeroSection() {
+  const {resetWish} = useWishStore();
   const  navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -37,7 +39,7 @@ export default function HeroSection() {
 
           <div className="flex gap-4 justify-center mt-10 flex-wrap">
             <button
-              onClick={()=>{navigate("/create")}}
+              onClick={()=>{ resetWish(); navigate("/create")}}
               className="
               px-8 py-4
               rounded-2xl

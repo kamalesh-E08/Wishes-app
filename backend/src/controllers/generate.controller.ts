@@ -10,7 +10,12 @@ export async function generateWish(req: Request, res: Response) {
   try {
     console.log("================================");
     console.log("REQUEST RECEIVED");
-
+    if (req.body.additionalInformation?.length > 100) {
+      return res.status(400).json({
+        success: false,
+        error: "Additional information must be under 100 characters",
+      });
+    }
     const prompt = buildPrompt(req.body);
 
     console.log("Prompt Length:", prompt.length);
@@ -31,8 +36,6 @@ export async function generateWish(req: Request, res: Response) {
     const wish = await Wish.create({
       occasion: req.body.occasion,
       theme: req.body.theme,
-
-      uploadedImage: req.body.uploadedImage,
 
       generatedImage: imagePath,
 

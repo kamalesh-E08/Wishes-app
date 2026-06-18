@@ -1,8 +1,25 @@
+import { useEffect  } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWishStore } from "../store/wishesStore";
 
 export default function ResultPage() {
-  const { generatedImage } = useWishStore();
+  const navigate = useNavigate();
+  const { generatedImage, resetWish } = useWishStore();
   console.log(generatedImage)
+
+  useEffect(() => {
+    const handleBack = () => {
+      resetWish();
+
+      navigate("/create", {
+        replace: true,
+      });
+    };
+
+    window.addEventListener("popstate", handleBack);
+
+    return () => window.removeEventListener("popstate", handleBack);
+  }, [navigate, resetWish]);
 
   const handleDownload = () => {
     if (!generatedImage) return;
@@ -29,14 +46,17 @@ export default function ResultPage() {
         Download
       </button>
       {generatedImage && (
-        
         <img
           src={generatedImage}
           alt=""
           className="
-          rounded-3xl
-          w-full
-          "
+            max-h-[80vh]
+            max-w-full
+            mx-auto
+            object-contain
+            rounded-3xl
+            shadow-2xl
+            "
         />
       )}
     </div>

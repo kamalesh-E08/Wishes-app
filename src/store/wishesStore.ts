@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface WishState {
   uploadedImage: string | null;
@@ -7,10 +8,10 @@ interface WishState {
   theme: string;
 
   people: string[];
-
   decorations: string[];
 
   customMessage: string;
+  additionalInformation: string;
 
   animationEnabled: boolean;
 
@@ -19,8 +20,6 @@ interface WishState {
   currentStep: number;
 
   generatedImage: string | null;
-
-  additionalInformation: string;
 
   setAdditionalInformation: (info: string) => void;
 
@@ -43,82 +42,106 @@ interface WishState {
   setAIEngine: (engine: string) => void;
 
   setCurrentStep: (step: number) => void;
+
+  resetWish: () => void;
 }
 
-export const useWishStore = create<WishState>((set) => ({
-  uploadedImage: null,
+export const useWishStore = create<WishState>()(
+  persist(
+    (set) => ({
+      uploadedImage: null,
 
-  occasion: "",
+      occasion: "",
 
-  theme: "",
+      theme: "",
 
-  people: [],
+      people: [],
 
-  decorations: [],
+      decorations: [],
 
-  customMessage: "",
+      customMessage: "",
 
-  animationEnabled: false,
+      additionalInformation: "",
 
-  aiEngine: "ChatGPT",
+      animationEnabled: false,
 
-  currentStep: 1,
+      aiEngine: "ChatGPT",
 
-  generatedImage: null,
+      currentStep: 1,
 
-  additionalInformation: "",
+      generatedImage: null,
 
-  setAdditionalInformation: (info) =>
-    set({
-      additionalInformation: info,
+      setAdditionalInformation: (info) =>
+        set({
+          additionalInformation: info,
+        }),
+
+      setImage: (img) =>
+        set({
+          uploadedImage: img,
+        }),
+
+      setOccasion: (occasion) =>
+        set({
+          occasion,
+        }),
+
+      setTheme: (theme) =>
+        set({
+          theme,
+        }),
+
+      setPeople: (people) =>
+        set({
+          people,
+        }),
+
+      setDecorations: (decorations) =>
+        set({
+          decorations,
+        }),
+
+      setCustomMessage: (message) =>
+        set({
+          customMessage: message,
+        }),
+
+      setAnimation: (state) =>
+        set({
+          animationEnabled: state,
+        }),
+
+      setAIEngine: (engine) =>
+        set({
+          aiEngine: engine,
+        }),
+
+      setCurrentStep: (step) =>
+        set({
+          currentStep: step,
+        }),
+
+      setGeneratedImage: (url) =>
+        set({
+          generatedImage: url,
+        }),
+
+      resetWish: () =>
+        set({
+          uploadedImage: null,
+          occasion: "",
+          theme: "",
+          people: [],
+          decorations: [],
+          customMessage: "",
+          additionalInformation: "",
+          animationEnabled: false,
+          currentStep: 1,
+          generatedImage: null,
+        }),
     }),
-
-  setImage: (img) =>
-    set({
-      uploadedImage: img,
-    }),
-
-  setOccasion: (occasion) =>
-    set({
-      occasion,
-    }),
-
-  setTheme: (theme) =>
-    set({
-      theme,
-    }),
-
-  setPeople: (people) =>
-    set({
-      people,
-    }),
-
-  setDecorations: (decorations) =>
-    set({
-      decorations,
-    }),
-
-  setCustomMessage: (message) =>
-    set({
-      customMessage: message,
-    }),
-
-  setAnimation: (state) =>
-    set({
-      animationEnabled: state,
-    }),
-
-  setAIEngine: (engine) =>
-    set({
-      aiEngine: engine,
-    }),
-
-  setCurrentStep: (step) =>
-    set({
-      currentStep: step,
-    }),
-  setGeneratedImage: (url) =>
-    set({
-      generatedImage: url,
-    }),
-}));
+    {
+      name: "wish-storage",
+    },
+  ),
+);

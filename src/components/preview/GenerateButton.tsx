@@ -23,7 +23,7 @@ export default function GenerateButton() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
-
+      console.log("GenerateButton Image Length:", uploadedImage?.length);
       const result = await generateWish({
         uploadedImage,
         occasion,
@@ -43,7 +43,7 @@ export default function GenerateButton() {
       if (result.success) {
         console.log(result)
         setGeneratedImage(result.imageURL);
-        navigate("/result");
+        navigate("/result",{replace:true,});
       }
     } catch (error) {
       console.error("Generation Failed:", error);

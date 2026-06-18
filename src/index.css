@@ -21,3 +21,9 @@ body {
   background: #6c63ff;
   border-radius: 10px;
 }
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}

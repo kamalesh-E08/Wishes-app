@@ -1,41 +1,53 @@
 export async function compressImage(file: File): Promise<string> {
+  const fileSizeMB = file.size / 1024 / 1024;
+
+  if (fileSizeMB < 1) {
+    return await fileToBase64(file);
+  }
+
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const reader = new FileReader();
 
-    img.onload = () => {
-      const MAX_WIDTH = 1024;
+    reader.onload = (e) => {
+      const img = new Image();
 
-      let width = img.width;
-      let height = img.height;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
 
-      if (width > MAX_WIDTH) {
-        const ratio = MAX_WIDTH / width;
+        const ctx = canvas.getContext("2d");
 
-        width = MAX_WIDTH;
-        height = height * ratio;
-      }
+        if (!ctx) {
+          reject("Canvas Error");
+          return;
+        }
 
-      const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-      canvas.width = width;
-      canvas.height = height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
 
-      const ctx = canvas.getContext("2d");
+        const quality = fileSizeMB >= 2 ? 0.6 : 0.8;
 
-      if (!ctx) {
-        reject(new Error("Canvas not supported"));
-        return;
-      }
+        const compressed = canvas.toDataURL("image/jpeg", quality);
 
-      ctx.drawImage(img, 0, 0, width, height);
+        resolve(compressed);
+      };
 
-      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.8);
-
-      resolve(compressedBase64);
+      img.src = e.target?.result as string;
     };
 
-    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
-    img.src = URL.createObjectURL(file);
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result as string);
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
   });
 }

@@ -17,11 +17,6 @@ const WishSchema = new mongoose.Schema(
       required: true,
     },
 
-    uploadedImage: {
-      type: String,
-      required: true,
-    },
-
     generatedImage: {
       type: String,
       required: true,

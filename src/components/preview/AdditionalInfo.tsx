@@ -18,6 +18,7 @@ export default function AdditionalInfo() {
       <p className="text-white/60 mb-4">Help AI personalize the design.</p>
 
       <textarea
+        maxLength={100}
         value={additionalInformation}
         onChange={(e) => setAdditionalInformation(e.target.value)}
         rows={6}
@@ -40,6 +41,7 @@ export default function AdditionalInfo() {
         resize-none
         "
       />
+      {additionalInformation.length}/100
     </div>
   );
 }
