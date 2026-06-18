@@ -5,3 +5,13 @@ export const getHistory = async () => {
 
   return response.data;
 };
+
+export const deleteWish = async (id: string) => {
+  await axios.delete(`http://localhost:5000/api/history/${id}`);
+};
+
+export const deleteMultipleWishes = async (ids: string[]) => {
+  await axios.delete("http://localhost:5000/api/history", {
+    data: { ids },
+  });
+};

@@ -10,8 +10,7 @@ export default function ResultPage() {
   useEffect(() => {
     const handleBack = () => {
       resetWish();
-
-      navigate("/create", {
+      navigate("/history", {
         replace: true,
       });
     };

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getHistory } from "../services/history";
+import {
+  getHistory,
+  deleteWish,
+  deleteMultipleWishes,
+} from "../services/history";
 
 interface Wish {
   _id: string;
@@ -12,6 +16,32 @@ interface Wish {
 export default function HistoryPage() {
   const [history, setHistory] = useState<Wish[]>([]);
   const [selectedWish, setSelectedWish] = useState<Wish | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectionMode, setSelectionMode] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm("Delete this wish?");
+    if (!confirmed) return;
+    await deleteWish(id);
+    setHistory((prev) => prev.filter((item) => item._id !== id));
+  };
+
+  const handleDeleteSelected = async () => {
+    const confirmed = window.confirm(`Delete ${selectedIds.length} wishes?`);
+    if (!confirmed) return;
+    await deleteMultipleWishes(selectedIds);
+    setHistory((prev) =>
+      prev.filter((item) => !selectedIds.includes(item._id)),
+    );
+    setSelectedIds([]);
+    setSelectionMode(false);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -47,6 +77,37 @@ export default function HistoryPage() {
       >
         Generated Wishes
       </h1>
+      <div className="flex justify-center gap-4 mb-10 flex-wrap">
+        <button
+          onClick={() => setSelectionMode(!selectionMode)}
+          className="
+            px-5
+            py-2
+            rounded-xl
+            bg-cyan-500
+            hover:bg-cyan-600
+            transition
+    "
+        >
+          {selectionMode ? "Cancel" : "Select"}
+        </button>
+
+        {selectionMode && selectedIds.length > 0 && (
+          <button
+            onClick={handleDeleteSelected}
+            className="
+                px-5
+                py-2
+                rounded-xl
+                bg-red-500
+                hover:bg-red-600
+                transition
+              "
+          >
+            Delete Selected ({selectedIds.length})
+          </button>
+        )}
+      </div>
 
       {history.length === 0 && (
         <div className="text-center text-white/50">
@@ -66,7 +127,7 @@ export default function HistoryPage() {
         {history.map((item) => (
           <div
             key={item._id}
-            className="
+            className={`
             relative
 
             w-full
@@ -81,6 +142,12 @@ export default function HistoryPage() {
             border
             border-white/10
 
+            ${
+              selectedIds.includes(item._id)
+                ? "border-cyan-400"
+                : "border-white/10"
+            }
+
             shadow-xl
 
             hover:scale-105
@@ -88,8 +155,52 @@ export default function HistoryPage() {
 
             transition-all
             duration-300
-            "
+            `}
           >
+            {selectionMode && (
+              <input
+                type="checkbox"
+                checked={selectedIds.includes(item._id)}
+                onChange={() => toggleSelect(item._id)}
+                className="
+                  absolute
+                  top-3
+                  left-3
+                  w-5
+                  h-5
+                  z-20
+                  cursor-pointer
+                  "
+              />
+            )}
+            {/* Delete Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item._id);
+              }}
+              className="
+                absolute
+                top-3
+                right-14
+                z-10
+
+                px-3
+                py-2
+
+                rounded-xl
+
+                bg-red-500
+
+                hover:bg-red-600
+
+                transition
+
+                cursor-pointer
+                "
+            >
+              🗑
+            </button>
             {/* Download Button */}
             <a
               href={`http://localhost:5000${item.generatedImage}`}
@@ -100,22 +211,15 @@ export default function HistoryPage() {
               top-3
               right-3
               z-10
-
               px-3
               py-2
-
               rounded-xl
-
               bg-black/50
               backdrop-blur-md
-
               border
               border-white/10
-
               hover:bg-cyan-500
-
               transition
-
               cursor-pointer
               "
             >
@@ -124,7 +228,14 @@ export default function HistoryPage() {
 
             {/* Clickable Card */}
             <div
-              onClick={() => setSelectedWish(item)}
+              onClick={() => {
+                if (selectionMode) {
+                  toggleSelect(item._id);
+                  return;
+                }
+
+                setSelectedWish(item);
+              }}
               className="cursor-pointer"
             >
               <img
