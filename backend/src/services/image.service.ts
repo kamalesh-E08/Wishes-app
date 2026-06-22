@@ -7,6 +7,8 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+
+
 export async function generateImage(prompt: string, uploadedImage?: string) {
   console.log("================================");
   console.log("IMAGE SERVICE STARTED");

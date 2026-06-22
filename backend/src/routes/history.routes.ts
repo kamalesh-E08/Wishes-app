@@ -1,11 +1,22 @@
 import { Router } from "express";
 import Wish from "../models/Wish";
+import { auth } from "../middleware/auth";
+import type { AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
+/**
+ * GET USER HISTORY
+ */
+router.get("/", auth, async (req: AuthRequest, res) => {
   try {
-    const wishes = await Wish.find().limit(20).sort({ createdAt: -1 });
+    const wishes = await Wish.find({
+      user: req.user?.id,
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .limit(20);
 
     res.json(wishes);
   } catch (error) {
@@ -16,32 +27,56 @@ router.get("/", async (_req, res) => {
     });
   }
 });
-router.delete("/:id", async (req, res) => {
+
+/**
+ * DELETE SINGLE WISH
+ */
+router.delete("/:id", auth, async (req: AuthRequest, res) => {
   try {
-    await Wish.findByIdAndDelete(req.params.id);
+    const wish = await Wish.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user?.id,
+    });
+
+    if (!wish) {
+      return res.status(404).json({
+        success: false,
+        message: "Wish not found",
+      });
+    }
 
     res.json({
       success: true,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
     });
   }
 });
 
-router.delete("/", async (req, res) => {
+/**
+ * DELETE MULTIPLE WISHES
+ */
+router.delete("/", auth, async (req: AuthRequest, res) => {
   try {
     const { ids } = req.body;
 
     await Wish.deleteMany({
-      _id: { $in: ids },
+      _id: {
+        $in: ids,
+      },
+      user: req.user?.id,
     });
 
     res.json({
       success: true,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
     });

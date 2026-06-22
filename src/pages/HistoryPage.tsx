@@ -25,6 +25,23 @@ export default function HistoryPage() {
     );
   };
 
+  const handleDownload = async (imageUrl: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `wish-${Date.now()}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm("Delete this wish?");
     if (!confirmed) return;
@@ -202,10 +219,11 @@ export default function HistoryPage() {
               🗑
             </button>
             {/* Download Button */}
-            <a
-              href={`http://localhost:5000${item.generatedImage}`}
-              download
-              onClick={(e) => e.stopPropagation()}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDownload(`http://localhost:5000${item.generatedImage}`);
+              }}
               className="
               absolute
               top-3
@@ -220,11 +238,10 @@ export default function HistoryPage() {
               border-white/10
               hover:bg-cyan-500
               transition
-              cursor-pointer
-              "
+                "
             >
               ⬇
-            </a>
+            </button>
 
             {/* Clickable Card */}
             <div

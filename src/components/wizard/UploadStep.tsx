@@ -45,8 +45,6 @@ export default function UploadStep() {
 
       <p className="text-white/60 mb-6">
         JPG, PNG • Maximum 5 MB
-        <br />
-        Images above 1 MB are automatically optimized.
       </p>
 
       {!uploadedImage && (

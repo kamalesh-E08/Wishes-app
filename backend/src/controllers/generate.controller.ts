@@ -1,12 +1,12 @@
-import type { Request, Response } from "express";
+import type { AuthRequest } from "../middleware/auth";
+import type { Response } from "express";
 import { buildPrompt } from "../services/promptBuilder";
 import { generateImage } from "../services/image.service";
 import { saveGeneratedImage } from "../services/storage.service";
 
-
 import Wish from "../models/Wish";
 
-export async function generateWish(req: Request, res: Response) {
+export async function generateWish(req: AuthRequest, res: Response) {
   try {
     console.log("================================");
     console.log("REQUEST RECEIVED");
@@ -34,16 +34,14 @@ export async function generateWish(req: Request, res: Response) {
     const imagePath = await saveGeneratedImage(image.base64, image.mimeType);
 
     const wish = await Wish.create({
+      user: req.user?.id,
       occasion: req.body.occasion,
       theme: req.body.theme,
-
       generatedImage: imagePath,
-
       people: req.body.people,
       decorations: req.body.decorations,
       customMessage: req.body.customMessage,
       animationEnabled: req.body.animationEnabled,
-
       prompt,
     });
 

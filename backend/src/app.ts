@@ -5,6 +5,7 @@ import path from "path";
 import uploadRoutes from "./routes/upload.routes"
 import generateRoutes from "./routes/generate.routes";
 import historyRoutes from "./routes/history.routes"
+import authRoutes from "./routes/auth.routes";
 const app = express();
 
 app.use(cors());
@@ -21,6 +22,7 @@ app.use(
   }),
 );
 
+app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes)
 app.use("/api/generate", generateRoutes);
 app.use("/api/history", historyRoutes);

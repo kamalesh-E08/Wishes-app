@@ -1,10 +1,7 @@
-import axios from "axios";
+import api from "./api";
 
 export async function generateWish(payload: unknown) {
-  const response = await axios.post(
-    "http://localhost:5000/api/generate",
-    payload,
-  );
-  console.log(response.data);
+  const response = await api.post("/generate", payload);
+
   return response.data;
 }

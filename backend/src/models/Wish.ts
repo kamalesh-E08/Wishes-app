@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const WishSchema = new mongoose.Schema(
   {
-    userId: {
-      type: String,
-      required: false,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-
     occasion: {
       type: String,
       required: true,

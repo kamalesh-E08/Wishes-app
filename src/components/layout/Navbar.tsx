@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { useWishStore } from "../../store/wishesStore";
-
+import { useAuthStore } from "../../store/authStore";
 const Navbar = () => {
+  const { user, logout } = useAuthStore();
   const {resetWish} = useWishStore();
   return (
     <nav
@@ -25,17 +26,27 @@ const Navbar = () => {
 
         {/* Navigation */}
         <div className="flex gap-8 items-center">
-          <Link to="/" className="hover:text-purple-400 transition">
-            Home
-          </Link>
+          <Link to="/">Home</Link>
 
-          <Link to="/create" className="hover:text-purple-400 transition">
-            Create
-          </Link>
+          {user ? (
+            <>
+              <Link onClick={resetWish} to="/create">
+                Create
+              </Link>
 
-          <Link to="/history" className="hover:text-purple-400 transition">
-            History
-          </Link>
+              <Link to="/history">History</Link>
+
+              <button onClick={logout} className="text-red-400">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+
+              <Link to="/register">Register</Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
