@@ -5,7 +5,6 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/HomePage";
 import CreateWishPage from "../pages/CreateWishPage";
 import PreviewPage from "../pages/PreviewPage";
-import DownloadPage from "../pages/DownloadPage";
 import HistoryPage from "../pages/HistoryPage";
 import ResultPage from "../pages/ResultPage";
 
@@ -40,15 +39,6 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <PreviewPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/download"
-          element={
-            <ProtectedRoute>
-              <DownloadPage />
             </ProtectedRoute>
           }
         />

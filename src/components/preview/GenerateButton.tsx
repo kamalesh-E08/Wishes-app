@@ -31,17 +31,12 @@ export default function GenerateButton() {
         theme,
         people,
         decorations,
-        additionalInformation,
+        customMessage,
         additionalInformation,
         animationEnabled,
         aiEngine,
       });
 
-      // if (result.success) {
-      //   const imageUrl = `data:${result.mimeType};base64,${result.imageBase64}`;
-      //   setGeneratedImage(imageUrl);
-      //   navigate("/result");
-      // }
       if (result.success) {
         console.log(result)
         setGeneratedImage(result.imageURL);

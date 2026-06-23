@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 import { loginUser } from "../services/auth";
 import { useAuthStore } from "../store/authStore";
+import { loginWithGoogle } from "../services/auth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -16,12 +17,20 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const data = await loginUser({
-        email,
-        password,
-      });
+      const user = await loginUser(email, password);
 
-      login(data.token, data.user);
+      if (!user.emailVerified) {
+        alert("Please verify your email first");
+        return;
+      }
+
+      login({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+      });
 
       navigate("/");
     } catch {
@@ -61,6 +70,36 @@ export default function LoginPage() {
           Login
         </button>
       </form>
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            const user = await loginWithGoogle();
+
+            login({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              emailVerified: user.emailVerified,
+            });
+
+            navigate("/");
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+        className="
+            w-full
+            py-3
+            rounded-xl
+            bg-white
+            text-black
+            font-medium
+          "
+      >
+        Continue with Google
+      </button>
 
       <p className="mt-4">
         New user?

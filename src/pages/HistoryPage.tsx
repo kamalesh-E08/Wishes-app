@@ -29,14 +29,12 @@ export default function HistoryPage() {
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = `wish-${Date.now()}.jpg`;
-      document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error(error);
     }
@@ -222,7 +220,7 @@ export default function HistoryPage() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDownload(`http://localhost:5000${item.generatedImage}`);
+                handleDownload(item.generatedImage);
               }}
               className="
               absolute
@@ -256,7 +254,7 @@ export default function HistoryPage() {
               className="cursor-pointer"
             >
               <img
-                src={`http://localhost:5000${item.generatedImage}`}
+                src={item.generatedImage}
                 alt={item.occasion}
                 className="
                 w-full
@@ -352,7 +350,7 @@ export default function HistoryPage() {
 
             <div className="pt-20 p-6">
               <img
-                src={`http://localhost:5000${selectedWish.generatedImage}`}
+                src={selectedWish.generatedImage}
                 alt={selectedWish.occasion}
                 className="
                 max-h-[500px]

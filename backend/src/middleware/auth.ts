@@ -1,15 +1,27 @@
-import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import type {
+  Request,
+  Response,
+  NextFunction,
+} from "express";
 
-export interface AuthRequest extends Request {
+import {firebaseAuth} from "../config/firebase";
+
+export interface AuthRequest
+  extends Request {
   user?: {
-    id: string;
+    uid: string;
+    email?: string;
   };
 }
 
-export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const auth = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const header = req.headers.authorization;
+    const header =
+      req.headers.authorization;
 
     if (!header) {
       return res.status(401).json({
@@ -17,18 +29,21 @@ export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
       });
     }
 
-    const token = header.replace("Bearer ", "");
+    const token =
+      header.replace(
+        "Bearer ",
+        "",
+      );
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      id: string;
-    };
+   const decoded = await firebaseAuth.verifyIdToken(token);
 
     req.user = {
-      id: decoded.id,
+      uid: decoded.uid,
+      email: decoded.email,
     };
 
     next();
-  } catch {
+  } catch{
     return res.status(401).json({
       message: "Unauthorized",
     });

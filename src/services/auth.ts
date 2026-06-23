@@ -1,19 +1,40 @@
-import axios from "axios";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendEmailVerification,
+} from "firebase/auth";
 
-const API_URL = "http://localhost:5000/api/auth";
+import { app } from "../firebase/firebase";
 
-export const registerUser = async (data: {
-  name: string;
-  email: string;
-  password: string;
-}) => {
-  const response = await axios.post(`${API_URL}/register`, data);
+const auth = getAuth(app);
 
-  return response.data;
-};
+export { auth };
 
-export const loginUser = async (data: { email: string; password: string }) => {
-  const response = await axios.post(`${API_URL}/login`, data);
+export async function registerUser(email: string, password: string) {
+  const credential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password,
+  );
 
-  return response.data;
-};
+  await sendEmailVerification(credential.user);
+
+  return credential.user;
+}
+
+export async function loginUser(email: string, password: string) {
+  const credential = await signInWithEmailAndPassword(auth, email, password);
+
+  return credential.user;
+}
+
+export async function loginWithGoogle() {
+  const provider = new GoogleAuthProvider();
+
+  const result = await signInWithPopup(auth, provider);
+
+  return result.user;
+}

@@ -11,7 +11,7 @@ const router = Router();
 router.get("/", auth, async (req: AuthRequest, res) => {
   try {
     const wishes = await Wish.find({
-      user: req.user?.id,
+      user: req.user?.uid,
     })
       .sort({
         createdAt: -1,
@@ -35,7 +35,7 @@ router.delete("/:id", auth, async (req: AuthRequest, res) => {
   try {
     const wish = await Wish.findOneAndDelete({
       _id: req.params.id,
-      user: req.user?.id,
+      user: req.user?.uid,
     });
 
     if (!wish) {
@@ -68,7 +68,7 @@ router.delete("/", auth, async (req: AuthRequest, res) => {
       _id: {
         $in: ids,
       },
-      user: req.user?.id,
+      user: req.user?.uid,
     });
 
     res.json({

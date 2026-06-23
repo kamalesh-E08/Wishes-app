@@ -1,18 +1,9 @@
-import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "../config/cloudinary";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-export async function uploadGeneratedImage(base64: string, mimeType: string) {
-  const result = await cloudinary.uploader.upload(
-    `data:${mimeType};base64,${base64}`,
-    {
-      folder: "wishes/generated",
-    },
-  );
+export async function uploadToCloudinary(imageBase64: string) {
+  const result = await cloudinary.uploader.upload(imageBase64, {
+    folder: "wishes-ai",
+  });
 
   return result.secure_url;
 }

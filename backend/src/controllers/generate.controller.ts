@@ -2,7 +2,7 @@ import type { AuthRequest } from "../middleware/auth";
 import type { Response } from "express";
 import { buildFluxPrompt } from "../services/promptBuilder";
 import { generateImage } from "../services/image.service";
-import { saveGeneratedImage } from "../services/storage.service";
+import {uploadToCloudinary} from "../services/cloudinary.service"
 
 import Wish from "../models/Wish";
 
@@ -41,13 +41,14 @@ export async function generateWish(req: AuthRequest, res: Response) {
     console.log("Generated Mime Type:", image.mimeType);
 
     console.log("Saving Wish...");
-    const imagePath = await saveGeneratedImage(image.base64, image.mimeType);
-
+    const imageUrl = await uploadToCloudinary(
+      `data:${image.mimeType};base64,${image.base64}`,
+    );
     const wish = await Wish.create({
-      user: req.user?.id,
+      user: req.user?.uid,
       occasion: req.body.occasion,
       theme: req.body.theme,
-      generatedImage: imagePath,
+      generatedImage: imageUrl,
       people: req.body.people,
       decorations: req.body.decorations,
       customMessage: req.body.customMessage,
@@ -60,7 +61,7 @@ export async function generateWish(req: AuthRequest, res: Response) {
 
     res.json({
       success: true,
-      imageURL: `http://localhost:5000${imagePath}`,
+      imageURL: imageUrl,
       mimeType: image.mimeType,
       wishId: wish._id,
     });

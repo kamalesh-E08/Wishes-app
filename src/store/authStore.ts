@@ -2,16 +2,17 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface User {
-  _id: string;
-  name: string;
-  email: string;
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL?: string | null;
+  emailVerified: boolean;
 }
 
 interface AuthState {
-  token: string | null;
   user: User | null;
 
-  login: (token: string, user: User) => void;
+  login: (user: User) => void;
 
   logout: () => void;
 }
@@ -19,18 +20,15 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      token: null,
       user: null,
 
-      login: (token, user) =>
+      login: (user) =>
         set({
-          token,
           user,
         }),
 
       logout: () =>
         set({
-          token: null,
           user: null,
         }),
     }),

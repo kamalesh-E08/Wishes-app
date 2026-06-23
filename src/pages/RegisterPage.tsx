@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../services/auth";
 import { useAuthStore } from "../store/authStore";
+import { loginWithGoogle } from "../services/auth";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -16,13 +17,15 @@ export default function RegisterPage() {
     e.preventDefault();
 
     try {
-      const data = await registerUser({
-        name,
-        email,
-        password,
-      });
+      const user = await registerUser(email, password);
 
-      login(data.token, data.user);
+      login({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+      });
 
       navigate("/");
     } catch {
@@ -69,6 +72,36 @@ export default function RegisterPage() {
           Register
         </button>
       </form>
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            const user = await loginWithGoogle();
+
+            login({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              emailVerified: user.emailVerified,
+            });
+
+            navigate("/");
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+        className="
+            w-full
+            py-3
+            rounded-xl
+            bg-white
+            text-black
+            font-medium
+          "
+      >
+        Continue with Google
+      </button>
 
       <p className="mt-4">
         Already have an account?

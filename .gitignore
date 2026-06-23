@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+backend/firebase-service-account.json
 backend/node_modules/
 node_modules
 dist
