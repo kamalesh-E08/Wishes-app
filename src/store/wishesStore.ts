@@ -3,22 +3,15 @@ import { persist } from "zustand/middleware";
 
 interface WishState {
   uploadedImage: string | null;
-
   occasion: string;
   theme: string;
-
   people: string[];
   decorations: string[];
-
   customMessage: string;
   additionalInformation: string;
-
   animationEnabled: boolean;
-
   aiEngine: string;
-
   currentStep: number;
-
   generatedImage: string | null;
 
   setAdditionalInformation: (info: string) => void;
@@ -65,7 +58,7 @@ export const useWishStore = create<WishState>()(
 
       animationEnabled: false,
 
-      aiEngine: "ChatGPT",
+      aiEngine: "flux",
 
       currentStep: 1,
 
@@ -138,6 +131,7 @@ export const useWishStore = create<WishState>()(
           animationEnabled: false,
           currentStep: 1,
           generatedImage: null,
+          aiEngine: "",
         }),
     }),
     {

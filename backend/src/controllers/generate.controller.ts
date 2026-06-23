@@ -1,6 +1,6 @@
 import type { AuthRequest } from "../middleware/auth";
 import type { Response } from "express";
-import { buildPrompt } from "../services/promptBuilder";
+import { buildFluxPrompt } from "../services/promptBuilder";
 import { generateImage } from "../services/image.service";
 import { saveGeneratedImage } from "../services/storage.service";
 
@@ -16,7 +16,17 @@ export async function generateWish(req: AuthRequest, res: Response) {
         error: "Additional information must be under 100 characters",
       });
     }
-    const prompt = buildPrompt(req.body);
+    let prompt = "";
+
+    switch (req.body.aiEngine) {
+      case "flux":
+        prompt = buildFluxPrompt(req.body);
+        break;
+
+      case "gemini":
+        prompt = buildFluxPrompt(req.body);
+        break;
+    }
 
     console.log("Prompt Length:", prompt.length);
     console.log("Uploaded Image Exists:", !!req.body.uploadedImage);
@@ -24,7 +34,7 @@ export async function generateWish(req: AuthRequest, res: Response) {
 
     console.log("Generating image...");
 
-    const image = await generateImage(prompt, req.body.uploadedImage);
+    const image = await generateImage(prompt, req.body.uploadedImage, req.body.aiEngine);
 
     console.log("Image Generated");
     console.log("Generated Base64 Length:", image.base64.length);
@@ -42,6 +52,7 @@ export async function generateWish(req: AuthRequest, res: Response) {
       decorations: req.body.decorations,
       customMessage: req.body.customMessage,
       animationEnabled: req.body.animationEnabled,
+      aiProvider:req.body.aiEngine, 
       prompt,
     });
 

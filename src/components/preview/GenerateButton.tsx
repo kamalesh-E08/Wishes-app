@@ -16,6 +16,7 @@ export default function GenerateButton() {
     additionalInformation,
     animationEnabled,
     setGeneratedImage,
+    aiEngine
   } = useWishStore();
 
   const [loading, setLoading] = useState(false);
@@ -30,9 +31,10 @@ export default function GenerateButton() {
         theme,
         people,
         decorations,
-        customMessage,
+        additionalInformation,
         additionalInformation,
         animationEnabled,
+        aiEngine,
       });
 
       // if (result.success) {
