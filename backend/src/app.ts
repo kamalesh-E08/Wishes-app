@@ -5,6 +5,8 @@ import path from "path";
 import uploadRoutes from "./routes/upload.routes"
 import generateRoutes from "./routes/generate.routes";
 import historyRoutes from "./routes/history.routes"
+import eventRoutes from "./routes/event.route";
+import onedriveRoutes from "./routes/onedrive.routes"
 const app = express();
 
 app.use(cors());
@@ -24,6 +26,8 @@ app.use(
 app.use("/api/upload", uploadRoutes)
 app.use("/api/generate", generateRoutes);
 app.use("/api/history", historyRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/onedrive", onedriveRoutes);
 
 app.use(
   "/uploads",

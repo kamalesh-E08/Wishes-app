@@ -7,7 +7,7 @@ import CreateWishPage from "../pages/CreateWishPage";
 import PreviewPage from "../pages/PreviewPage";
 import HistoryPage from "../pages/HistoryPage";
 import ResultPage from "../pages/ResultPage";
-
+import EventDashboardPage from "../pages/EventDashboardPage"
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 
@@ -61,6 +61,14 @@ const AppRoutes = () => {
           }
         />
       </Route>
+      <Route
+        path="/events"
+        element={
+          <ProtectedRoute>
+            <EventDashboardPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

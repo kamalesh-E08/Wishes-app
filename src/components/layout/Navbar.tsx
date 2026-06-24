@@ -35,6 +35,15 @@ const Navbar = () => {
               </Link>
 
               <Link to="/history">History</Link>
+              <Link
+                to="/events"
+                className="
+                    hover:text-purple-400
+                    transition
+                  "
+              >
+                Automations
+              </Link>
 
               <button onClick={logout} className="text-red-400">
                 Logout
