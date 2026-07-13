@@ -1,6 +1,32 @@
 import { FileSpreadsheet } from "lucide-react";
+
 import { useEventStore } from "../../store/eventStore";
+
 import { uploadExcel, fetchEventsBySource } from "../../services/event";
+
+const normalizeEvents = (events: any[]) =>
+  events.map((event) => ({
+    ...event,
+
+    Name: event.name,
+    Email: event.email,
+    Department: event.department,
+
+    EventType: event.occasion,
+
+    // Keep original ISO date
+    EventDate: event.eventDate,
+
+    photoUrl: event.photoUrl,
+
+    customMessage: event.customMessage,
+
+    generatedWishImage: event.generatedWishImage,
+
+    generatedWishText: event.generatedWishText,
+
+    status: event.status,
+  }));
 
 export default function ExcelUploader() {
   const {
@@ -13,25 +39,25 @@ export default function ExcelUploader() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const file = e.target.files?.[0];
+
       if (!file) return;
-      await uploadExcel(file);
+
+      // Upload Excel
+      const uploadResponse = await uploadExcel(file);
+
+      // Reload events from DB
       const response = await fetchEventsBySource("excel");
-      const events = response.data;
-      const normalizeEvents = (events: any[]) =>
-        events.map((event) => ({
-          ...event,
-          Name: event.name,
-          Email: event.email,
-          Department: event.department,
-          EventType: event.occasion,
-          EventDate: new Date(event.eventDate).toLocaleDateString(),
-          status: event.status,
-        }));
-      setManualEvents(normalizeEvents(response.data));
+
+      const normalized = normalizeEvents(response.data);
+
+      setManualEvents(normalized);
+
       setUploadedFileName(file.name);
 
-      alert(`${events.length} events imported successfully`);
-    } catch{
+      alert(`${uploadResponse.data.count} events imported successfully`);
+    } catch (error) {
+      console.error(error);
+
       alert("Failed to import Excel");
     }
   };
@@ -76,9 +102,9 @@ export default function ExcelUploader() {
               <FileSpreadsheet size={18} />
               Replace File
               <input
+                hidden
                 type="file"
                 accept=".xlsx,.xls"
-                className="hidden"
                 onChange={handleFileUpload}
               />
             </label>
@@ -138,9 +164,9 @@ export default function ExcelUploader() {
           <FileSpreadsheet size={18} />
           Choose Excel File
           <input
+            hidden
             type="file"
             accept=".xlsx,.xls"
-            className="hidden"
             onChange={handleFileUpload}
           />
         </label>

@@ -8,8 +8,22 @@ import DecorationStep from "../components/wizard/DecorationStep";
 import AnimationStep from "../components/wizard/AnimationStep";
 import EngineStep from "../components/wizard/EngineStep";
 import { useWishStore } from "../store/wishesStore";
-
+import { useEffect } from "react";
+import { useEventStore } from "../store/eventStore";
 export default function CreateWishPage() {
+
+  const { selectedEvent } = useEventStore();
+
+  const { setOccasion, setCustomMessage } = useWishStore();
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+
+    setOccasion(selectedEvent.EventType);
+
+    setCustomMessage(`Happy ${selectedEvent.EventType} ${selectedEvent.Name}`);
+  }, [selectedEvent]);
+
   const { currentStep } = useWishStore();
 
   const renderStep = () => {

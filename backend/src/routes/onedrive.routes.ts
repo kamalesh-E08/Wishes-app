@@ -1,9 +1,15 @@
-import express from "express";
+import { Router } from "express";
 
-import { listExcelFiles } from "../controllers/onedrive.controller";
+import { auth } from "../middleware/auth";
 
-const router = express.Router();
+import {
+  importOneDriveExcel,
+  syncOneDrive,
+} from "../controllers/onedrive.controller";
 
-router.get("/files", listExcelFiles);
+const router = Router();
+
+router.post("/import", auth, importOneDriveExcel);
+router.post("/sync", auth, syncOneDrive);
 
 export default router;

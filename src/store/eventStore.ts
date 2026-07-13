@@ -2,56 +2,108 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface EventRecord {
+  _id: string;
+  userId: string;
   Name: string;
   Email: string;
   EventType: string;
   EventDate: string;
   Department: string;
-  WhatsAppGroup: string;
+  WhatsAppGroup?: string;
+  photoUrl?: string;
+  customMessage?: string;
+  generatedWishImage?: string;
+  generatedWishText?: string;
+  generatedAt?: string;
+  status: "pending" | "approved" | "generated" | "sent" | "failed";
+  source: "excel" | "onedrive";
 }
 
 interface EventStore {
-  selectedFile: any | null;
   uploadedFileName: string;
-  manualEvents: any[];
-  oneDriveEvents: any[];
+  selectedFile: any | null;
+  manualEvents: EventRecord[];
+  oneDriveEvents: EventRecord[];
   activeSource: "manual" | "onedrive";
-
+  selectedEvent: EventRecord | null;
+  generatedPreview: string;
+  
   setUploadedFileName: (fileName: string) => void;
   setSelectedFile: (file: any) => void;
   clearEvents: () => void;
-  setManualEvents: (events: any[]) => void;
-  setOneDriveEvents: (events: any[]) => void;
+  setManualEvents: (events: EventRecord[]) => void;
+  setOneDriveEvents: (events: EventRecord[]) => void;
   setActiveSource: (source: "manual" | "onedrive") => void;
+  setSelectedEvent: (event: EventRecord | null) => void;
+  setGeneratedPreview: (url: string) => void;
 }
 
 export const useEventStore = create<EventStore>()(
   persist(
     (set) => ({
-
       uploadedFileName: "",
+
       selectedFile: null,
+
       manualEvents: [],
+
       oneDriveEvents: [],
+
       activeSource: "manual",
 
+      selectedEvent: null,
 
-      setSelectedFile: (file) => set({ selectedFile: file }),
+      generatedPreview: "",
+
       setUploadedFileName: (fileName) =>
         set({
           uploadedFileName: fileName,
         }),
+
+      setSelectedFile: (file) =>
+        set({
+          selectedFile: file,
+        }),
+
+      setManualEvents: (events) =>
+        set({
+          manualEvents: events,
+        }),
+
+      setOneDriveEvents: (events) =>
+        set({
+          oneDriveEvents: events,
+        }),
+
+      setActiveSource: (source) =>
+        set({
+          activeSource: source,
+        }),
+
+      setSelectedEvent: (event) =>
+        set({
+          selectedEvent: event,
+        }),
+
+      setGeneratedPreview: (url) =>
+        set({
+          generatedPreview: url,
+        }),
+
       clearEvents: () =>
         set({
-  
-          selectedFile: null,
           uploadedFileName: "",
+
+          selectedFile: null,
+
+          manualEvents: [],
+
+          oneDriveEvents: [],
+
+          selectedEvent: null,
+
+          generatedPreview: "",
         }),
-      setManualEvents: (events) => set({ manualEvents: events }),
-
-      setOneDriveEvents: (events) => set({ oneDriveEvents: events }),
-
-      setActiveSource: (source) => set({ activeSource: source }),
     }),
     {
       name: "wishes-events",

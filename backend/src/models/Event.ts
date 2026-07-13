@@ -10,13 +10,31 @@ export interface IEvent extends Document {
 
   eventDate: Date;
 
-  department?: string;
+  eventMonth: number;
+
+  eventDay: number;
+
+  department: string;
 
   customMessage?: string;
 
-  status: "pending" | "approved" | "generated" | "sent" | "failed";
+  status:
+    | "pending"
+    | "generating"
+    | "generated"
+    | "sending"
+    | "sent"
+    | "failed";
 
   source: "excel" | "onedrive";
+
+  photoUrl: string;
+
+  generatedWishImage: string;
+
+  generatedWishText?: string;
+
+  generatedAt: Date;
 
   createdAt: Date;
 }
@@ -43,8 +61,23 @@ const EventSchema = new Schema<IEvent>(
       required: true,
     },
 
+    photoUrl: {
+      type: String,
+      default: "",
+    },
+
     eventDate: {
       type: Date,
+      required: true,
+    },
+
+    eventMonth: {
+      type: Number,
+      required: true,
+    },
+
+    eventDay: {
+      type: Number,
       required: true,
     },
 
@@ -54,6 +87,7 @@ const EventSchema = new Schema<IEvent>(
 
     status: {
       type: String,
+      enum: ["pending", "generating", "generated", "sending", "sent", "failed"],
       default: "pending",
     },
 
@@ -61,6 +95,17 @@ const EventSchema = new Schema<IEvent>(
       type: String,
       default: "excel",
     },
+    generatedWishImage: {
+      type: String,
+      default: "",
+    },
+
+    generatedWishText: {
+      type: String,
+      default: "",
+    },
+
+    generatedAt: Date,
   },
   {
     timestamps: true,

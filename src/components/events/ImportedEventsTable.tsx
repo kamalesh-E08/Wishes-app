@@ -1,9 +1,8 @@
 import { useEventStore } from "../../store/eventStore";
 
 export default function ImportedEventsTable() {
-  const { manualEvents, oneDriveEvents, activeSource, setActiveSource } =
-    useEventStore();
 
+  const { manualEvents, oneDriveEvents, activeSource, setActiveSource } = useEventStore();
   const events = activeSource === "manual" ? manualEvents : oneDriveEvents;
 
   return (
@@ -92,6 +91,7 @@ export default function ImportedEventsTable() {
             >
               <th className="py-3">Name</th>
               <th>Email</th>
+              <th>PhotoUrl</th>
               <th>Department</th>
               <th>Event Type</th>
               <th>Event Date</th>
@@ -114,6 +114,24 @@ export default function ImportedEventsTable() {
                   <td className="py-4 font-medium">{event.Name}</td>
 
                   <td>{event.Email}</td>
+                  <td>
+                    {event.photoUrl ? (
+                      <img
+                        src={event.photoUrl}
+                        alt={event.Name}
+                        className="
+                          w-12
+                          h-12
+                          rounded-full
+                          object-cover
+                          border
+                          border-white/10
+                        "
+                      />
+                    ) : (
+                      <span className="text-gray-500">No Photo</span>
+                    )}
+                  </td>
 
                   <td>{event.Department || "-"}</td>
 
@@ -124,24 +142,24 @@ export default function ImportedEventsTable() {
                   <td>
                     <span
                       className={`
-                        px-2
-                        py-1
-                        rounded-full
-                        text-xs
+                          px-2
+                          py-1
+                          rounded-full
+                          text-xs
 
-                        ${
-                          event.status === "Sent"
-                            ? "bg-green-500/20 text-green-300"
-                            : event.status === "Generated"
-                              ? "bg-blue-500/20 text-blue-300"
-                              : event.status === "Failed"
-                                ? "bg-red-500/20 text-red-300"
-                                : "bg-yellow-500/20 text-yellow-300"
-                        }
-                      `}
-                    >
-                      {event.status || "Pending"}
-                    </span>
+                          ${
+                            event.status === "sent"
+                              ? "bg-green-500/20 text-green-300"
+                              : event.status === "generated"
+                                ? "bg-blue-500/20 text-blue-300"
+                                : event.status === "failed"
+                                  ? "bg-red-500/20 text-red-300"
+                                  : "bg-yellow-500/20 text-yellow-300"
+                          }
+                        `}
+                                        >
+                                          {event.status}
+                                        </span>
                   </td>
                 </tr>
               ))

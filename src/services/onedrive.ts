@@ -1,6 +1,9 @@
-import * as XLSX from "xlsx";
+import api from "./api";
 import { getAccessToken } from "./microsoftAuth";
 
+/**
+ * List Excel files from OneDrive
+ */
 export const getExcelFiles = async () => {
   const token = await getAccessToken();
 
@@ -19,36 +22,53 @@ export const getExcelFiles = async () => {
 
   const data = await response.json();
 
-  console.log("GRAPH RESPONSE", data);
-
   return (
     data.value?.filter(
-      (file: any) =>
-        file.name?.endsWith(".xlsx") || file.name?.endsWith(".xls"),
+      (file: any) => file.name.endsWith(".xlsx") || file.name.endsWith(".xls"),
     ) || []
   );
 };
 
-export const readExcelFromOneDrive = async (downloadUrl: string) => {
-  const response = await fetch(downloadUrl);
+/**
+ * First Time Import selected Excel file
+ */
+export const importOneDriveExcel = async (fileId: string, fileName: string) => {
+  const microsoftToken = await getAccessToken();
 
-  if (!response.ok) {
-    throw new Error("Failed to download Excel file");
-  }
+  const response = await api.post(
+    "/onedrive/import",
+    {
+      fileId,
+      fileName,
+    },
+    {
+      headers: {
+        "x-ms-token": microsoftToken,
+      },
+    },
+  );
 
-  const arrayBuffer = await response.arrayBuffer();
-
-  const workbook = XLSX.read(arrayBuffer, {
-    type: "array",
-  });
-
-  const firstSheet = workbook.SheetNames[0];
-
-  const worksheet = workbook.Sheets[firstSheet];
-
-  const rows = XLSX.utils.sheet_to_json(worksheet, {
-    defval: "",
-  });
-
-  return rows;
+  return response.data;
 };
+
+/*
+---------------------------------------
+Manual Sync
+---------------------------------------
+*/
+
+export async function syncOneDrive() {
+  const msToken = await getAccessToken();
+
+  const response = await api.post(
+    "/onedrive/sync",
+    {},
+    {
+      headers: {
+        "x-ms-token": msToken,
+      },
+    },
+  );
+
+  return response.data;
+}
