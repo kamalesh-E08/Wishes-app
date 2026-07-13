@@ -1,12 +1,11 @@
-import { useEffect  } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWishStore } from "../store/wishesStore";
-
 
 export default function ResultPage() {
   const navigate = useNavigate();
   const { generatedImage, resetWish } = useWishStore();
-  console.log(generatedImage)
+  console.log(generatedImage);
 
   useEffect(() => {
     const handleBack = () => {
@@ -38,7 +37,9 @@ export default function ResultPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:py-20">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-10">Your AI Wish</h1>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-10">
+        Your AI Wish
+      </h1>
       <button
         onClick={() => handleDownload}
         className="

@@ -20,14 +20,18 @@ export default function CTASection() {
         text-center
         "
       >
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold">Ready To Create Wishes?</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold">
+          Ready To Create Wishes?
+        </h2>
 
         <p className="text-white/70 mt-6 text-lg">
           Turn memories into beautiful AI generated greetings.
         </p>
 
         <button
-          onClick={()=>{navigate("/create")}}
+          onClick={() => {
+            navigate("/create");
+          }}
           className="
           mt-10
           px-8

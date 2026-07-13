@@ -1,8 +1,6 @@
 import { useActiveEvents } from "../../hooks/useActiveEvents";
 
-
 export default function UpcomingEvents() {
-  
   const events = useActiveEvents();
 
   const upcomingEvents = [...events]

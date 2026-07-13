@@ -2,7 +2,6 @@ import { Calendar, Clock, CheckCircle, Mail } from "lucide-react";
 
 import { useActiveEvents } from "../../hooks/useActiveEvents";
 
-
 export default function EventStats() {
   const events = useActiveEvents();
 

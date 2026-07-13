@@ -1,8 +1,8 @@
 import { useEventStore } from "../../store/eventStore";
 
 export default function ImportedEventsTable() {
-
-  const { manualEvents, oneDriveEvents, activeSource, setActiveSource } = useEventStore();
+  const { manualEvents, oneDriveEvents, activeSource, setActiveSource } =
+    useEventStore();
   const events = activeSource === "manual" ? manualEvents : oneDriveEvents;
 
   return (
@@ -157,9 +157,9 @@ export default function ImportedEventsTable() {
                                   : "bg-yellow-500/20 text-yellow-300"
                           }
                         `}
-                                        >
-                                          {event.status}
-                                        </span>
+                    >
+                      {event.status}
+                    </span>
                   </td>
                 </tr>
               ))

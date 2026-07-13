@@ -11,7 +11,6 @@ import { useWishStore } from "../store/wishesStore";
 import { useEffect } from "react";
 import { useEventStore } from "../store/eventStore";
 export default function CreateWishPage() {
-
   const { selectedEvent } = useEventStore();
 
   const { setOccasion, setCustomMessage } = useWishStore();
@@ -56,7 +55,9 @@ export default function CreateWishPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-12">Create Wish</h1>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-12">
+        Create Wish
+      </h1>
 
       <ProgressBar />
 
