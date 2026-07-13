@@ -47,7 +47,7 @@ export default function EventStats() {
   ];
 
   return (
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
       {stats.map((item) => {
         const Icon = item.icon;
 
@@ -59,7 +59,7 @@ export default function EventStats() {
               border
               border-white/10
               rounded-2xl
-              p-6
+              p-4 sm:p-6
             "
           >
             <div className="flex justify-between">

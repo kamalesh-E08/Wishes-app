@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useWishStore } from "../../store/wishesStore";
 
 export default function WizardNavigation() {
-
-    const { currentStep, uploadedImage, occasion, theme, setCurrentStep } = useWishStore();
+  const { currentStep, uploadedImage, occasion, theme, setCurrentStep } =
+    useWishStore();
   const navigate = useNavigate();
 
   const canContinue = () => {
@@ -33,13 +33,10 @@ export default function WizardNavigation() {
   };
 
   return (
-    <div className="flex justify-between mt-12">
+    <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mt-8">
       <button
         onClick={prev}
-        className="
-        px-6 py-3 rounded-xl
-        bg-white/10
-        "
+        className="px-4 py-2 sm:px-6 sm:py-3 rounded-xl bg-white/10 w-full sm:w-auto"
       >
         Previous
       </button>
@@ -47,17 +44,11 @@ export default function WizardNavigation() {
       <button
         disabled={!canContinue()}
         onClick={next}
-        className={`
-                px-6
-                py-3
-                rounded-xl
-
-                ${
-                canContinue()
-                    ? "bg-gradient-to-r from-purple-500 to-cyan-500"
-                    : "bg-gray-700 cursor-not-allowed"
-                }
-            `}
+        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl w-full sm:w-auto ${
+          canContinue()
+            ? "bg-gradient-to-r from-purple-500 to-cyan-500"
+            : "bg-gray-700 cursor-not-allowed"
+        }`}
       >
         Next
       </button>

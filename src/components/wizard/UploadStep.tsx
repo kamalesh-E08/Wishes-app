@@ -37,15 +37,13 @@ export default function UploadStep() {
       border
       border-white/10
       rounded-3xl
-      p-8
+      p-4 sm:p-8
       bg-white/5
       "
     >
       <h2 className="text-2xl font-bold mb-2">Upload Photo</h2>
 
-      <p className="text-white/60 mb-6">
-        JPG, PNG • Maximum 5 MB
-      </p>
+      <p className="text-white/60 mb-6">JPG, PNG • Maximum 5 MB</p>
 
       {!uploadedImage && (
         <label
@@ -54,7 +52,7 @@ export default function UploadStep() {
           border-dashed
           border-cyan-500/30
           rounded-3xl
-          h-64
+          h-48 sm:h-64
           flex
           flex-col
           items-center
@@ -66,9 +64,11 @@ export default function UploadStep() {
           duration-300
           "
         >
-          <div className="text-6xl">📷</div>
+          <div className="text-4xl sm:text-6xl">📷</div>
 
-          <p className="mt-4 text-lg font-medium">Click to Upload Image</p>
+          <p className="mt-4 text-base sm:text-lg font-medium">
+            Click to Upload Image
+          </p>
 
           <p className="text-sm text-white/50 mt-2">JPG, PNG • Up to 5 MB</p>
 
@@ -88,15 +88,15 @@ export default function UploadStep() {
             src={uploadedImage}
             alt="Uploaded"
             className="
-            w-full
-            max-w-sm
-            mx-auto
-            aspect-square
-            object-cover
-            rounded-2xl
-            border
-            border-white/10
-            "
+              w-full
+              max-w-xs sm:max-w-sm
+              mx-auto
+              aspect-square
+              object-cover
+              rounded-2xl
+              border
+              border-white/10
+              "
           />
 
           <div className="flex justify-center gap-4 mt-6">

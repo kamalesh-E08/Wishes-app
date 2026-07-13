@@ -4,7 +4,7 @@ import PreviewHeader from "../components/preview/PreviewHeader";
 
 export default function PreviewPage() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
       <PreviewHeader />
 
       <div

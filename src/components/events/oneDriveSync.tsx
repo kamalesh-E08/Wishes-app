@@ -194,8 +194,8 @@ Unchanged : ${result.summary.unchanged}`,
   }
 
   return (
-    <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-      <div className="flex items-center justify-between">
+    <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <CheckCircle className="text-green-400" />
 

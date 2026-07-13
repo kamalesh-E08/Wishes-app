@@ -81,13 +81,13 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
       <h1
         className="
-        text-4xl
+        text-2xl sm:text-3xl md:text-4xl
         font-bold
         text-center
-        mb-12
+        mb-8 sm:mb-12
         "
       >
         Generated Wishes
@@ -353,7 +353,7 @@ export default function HistoryPage() {
                 src={selectedWish.generatedImage}
                 alt={selectedWish.occasion}
                 className="
-                max-h-[500px]
+                max-h-[40vh] sm:max-h-[60vh] md:max-h-[500px]
                 w-auto
 
                 object-contain

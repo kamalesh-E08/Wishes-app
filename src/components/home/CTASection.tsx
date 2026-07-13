@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function CTASection() {
   const navigate = useNavigate();
   return (
-    <section className="py-40 px-6">
+    <section className="py-20 sm:py-28 px-4 sm:px-6">
       <div
         className="
         max-w-5xl
@@ -16,11 +16,11 @@ export default function CTASection() {
         from-purple-900/40
         to-cyan-900/40
         backdrop-blur-xl
-        p-16
+        p-8 sm:p-14 lg:p-16
         text-center
         "
       >
-        <h2 className="text-6xl font-bold">Ready To Create Wishes?</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold">Ready To Create Wishes?</h2>
 
         <p className="text-white/70 mt-6 text-lg">
           Turn memories into beautiful AI generated greetings.

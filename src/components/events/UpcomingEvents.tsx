@@ -20,6 +20,7 @@ export default function UpcomingEvents() {
         border
         border-white/10
         p-6
+        w-full
       "
     >
       <h2 className="font-semibold text-xl mb-4">Upcoming Events</h2>

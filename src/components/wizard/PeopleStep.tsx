@@ -14,13 +14,13 @@ export default function PeopleStep() {
   };
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {options.map((person) => (
         <button
           key={person}
           onClick={() => togglePerson(person)}
           className={`
-            p-8
+            p-4 sm:p-8
             rounded-3xl
             border
             transition

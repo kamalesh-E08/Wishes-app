@@ -37,8 +37,8 @@ export default function ResultPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-20">
-      <h1 className="text-5xl font-bold mb-10">Your AI Wish</h1>
+    <div className="max-w-6xl mx-auto py-12 px-4 sm:py-20">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-10">Your AI Wish</h1>
       <button
         onClick={() => handleDownload}
         className="

@@ -135,7 +135,7 @@ export default function ExcelUploader() {
         border-dashed
         border-purple-500/40
         rounded-2xl
-        p-8
+        p-6 sm:p-8
         bg-white/5
       "
     >

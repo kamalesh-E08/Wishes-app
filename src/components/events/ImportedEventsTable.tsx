@@ -79,7 +79,7 @@ export default function ImportedEventsTable() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[800px]">
+        <table className="w-full min-w-[640px] md:min-w-[800px]">
           <thead>
             <tr
               className="

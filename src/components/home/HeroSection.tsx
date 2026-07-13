@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useWishStore } from "../../store/wishesStore";
 
 export default function HeroSection() {
-  const {resetWish} = useWishStore();
-  const  navigate = useNavigate();
+  const { resetWish } = useWishStore();
+  const navigate = useNavigate();
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute w-[600px] h-[600px] bg-purple-600/20 blur-[200px] rounded-full" />
-      <div className="absolute right-0 bottom-0 w-[500px] h-[500px] bg-cyan-500/20 blur-[180px] rounded-full" />
+    <section className="relative min-h-[calc(100vh-72px)] sm:min-h-screen flex items-center justify-center overflow-hidden py-20 sm:py-0">
+      <div className="absolute w-40 h-40 sm:w-56 sm:h-56 md:w-[600px] md:h-[600px] bg-purple-600/20 blur-[160px] rounded-full" />
+      <div className="absolute right-0 bottom-0 w-36 h-36 sm:w-56 sm:h-56 md:w-[500px] md:h-[500px] bg-cyan-500/20 blur-[160px] rounded-full" />
 
-      <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
@@ -22,7 +22,7 @@ export default function HeroSection() {
             AI Powered Wishes Generator
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-bold leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold leading-tight">
             Create
             <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               {" "}
@@ -39,7 +39,10 @@ export default function HeroSection() {
 
           <div className="flex gap-4 justify-center mt-10 flex-wrap">
             <button
-              onClick={()=>{ resetWish(); navigate("/create")}}
+              onClick={() => {
+                resetWish();
+                navigate("/create");
+              }}
               className="
               px-8 py-4
               rounded-2xl

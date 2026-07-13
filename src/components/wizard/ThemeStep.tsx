@@ -13,13 +13,13 @@ export default function ThemeStep() {
   const { theme, setTheme } = useWishStore();
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {themes.map((item) => (
         <div
           key={item}
           onClick={() => setTheme(item)}
           className={`
-            h-48
+            h-36 sm:h-48
             rounded-3xl
             flex
             items-center
@@ -35,7 +35,7 @@ export default function ThemeStep() {
             }
           `}
         >
-          <h3 className="text-xl font-semibold">{item}</h3>
+          <h3 className="text-lg sm:text-xl font-semibold">{item}</h3>
         </div>
       ))}
     </div>

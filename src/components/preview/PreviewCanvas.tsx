@@ -15,15 +15,17 @@ export default function PreviewCanvas() {
       items-center
       justify-center
 
-      min-h-[600px]
-      p-6
+      min-h-[320px]
+      md:min-h-[600px]
+      p-4 md:p-6
       "
     >
       {uploadedImage ? (
         <div
           className="
           w-full
-          max-w-[500px]
+          max-w-[360px]
+          md:max-w-[500px]
 
           aspect-[4/5]
 
