@@ -33,15 +33,25 @@ export async function syncOneDriveEvents(
       Download latest excel
   */
 
-  const response = await axios.get(
-    `https://graph.microsoft.com/v1.0/me/drive/items/${connection.fileId}/content`,
+  console.log("Fetching Excel metadata from Graph API...");
+  const metadataResponse = await axios.get(
+    `https://graph.microsoft.com/v1.0/me/drive/items/${connection.fileId}`,
     {
-      responseType: "arraybuffer",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    },
+    }
   );
+
+  const downloadUrl = metadataResponse.data["@microsoft.graph.downloadUrl"];
+  if (!downloadUrl) {
+    throw new Error("Could not retrieve download URL for the Excel file from Graph API.");
+  }
+
+  console.log("Downloading Excel content...");
+  const response = await axios.get(downloadUrl, {
+    responseType: "arraybuffer",
+  });
 
   console.log("Excel Downloaded");
 
@@ -78,8 +88,24 @@ export async function syncOneDriveEvents(
       Compare Excel with MongoDB
   */
 
-  for (const row of rows) {
-    const key = `${row.Email}_${row.EventType || row.Occasion}`;
+  // Filter out invalid/incomplete rows from Excel
+  const validRows = rows.filter((row: any) => {
+    return (
+      row.Name &&
+      row.Email &&
+      row.EventDate &&
+      row.EventDate instanceof Date &&
+      !isNaN(row.EventDate.getTime())
+    );
+  });
+
+  for (const row of validRows) {
+    const key = `${row.Email}_${row.EventType}`;
+
+    if (excelKeys.has(key)) {
+      console.log(`Skipping duplicate key in excel rows: ${key}`);
+      continue;
+    }
 
     excelKeys.add(key);
 
@@ -94,13 +120,13 @@ export async function syncOneDriveEvents(
 
       photoUrl: row.PhotoURL,
 
-      occasion: row.EventType || row.Occasion,
+      occasion: row.EventType,
 
-      eventDate: row.EventDate,
+      eventDate: row.EventDate!,
 
-      eventMonth: row.EventDate.getMonth() + 1,
+      eventMonth: row.EventDate!.getMonth() + 1,
 
-      eventDay: row.EventDate.getDate(),
+      eventDay: row.EventDate!.getDate(),
 
       department: row.Department,
 

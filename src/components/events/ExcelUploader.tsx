@@ -146,6 +146,16 @@ export default function ExcelUploader() {
           Upload employee birthdays, anniversaries and events
         </p>
 
+        <div className="mt-4">
+          <a
+            href="/demo.xlsx"
+            download="demo_wishes_template.xlsx"
+            className="text-sm text-cyan-400 hover:text-cyan-300 hover:underline inline-flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 transition"
+          >
+            📥 Download Demo Excel Template
+          </a>
+        </div>
+
         <label
           className="
             inline-flex

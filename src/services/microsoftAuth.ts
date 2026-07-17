@@ -14,7 +14,7 @@ export const msalInstance = new PublicClientApplication({
     cacheLocation: BrowserCacheLocation.LocalStorage,
     storeAuthStateInCookie: true,
   },
-});
+} as any);
 
 let initialized = false;
 
@@ -23,17 +23,47 @@ export const initializeMicrosoftAuth = async () => {
 
   await msalInstance.initialize();
 
-  const response = await msalInstance.handleRedirectPromise();
+  try {
+    const response = await msalInstance.handleRedirectPromise();
 
-  if (response?.account) {
-    msalInstance.setActiveAccount(response.account);
-
-    console.log("Microsoft Login Success");
-  } else {
+    if (response?.account) {
+      msalInstance.setActiveAccount(response.account);
+      console.log("Microsoft Login Success");
+    } else {
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        msalInstance.setActiveAccount(accounts[0]);
+      }
+    }
+  } catch (err: any) {
+    const isCacheError = err?.errorCode === "no_token_request_cache_error" || 
+                         (err?.message && err.message.includes("no_token_request_cache_error"));
+    if (isCacheError) {
+      console.log("MSAL: No active redirect flow request cache found (expected when logging in via popups).");
+    } else {
+      console.error("Microsoft Auth initialization redirect handler error:", err);
+    }
+    // fallback check
     const accounts = msalInstance.getAllAccounts();
-
     if (accounts.length > 0) {
       msalInstance.setActiveAccount(accounts[0]);
+    }
+  }
+
+  // Clear stale hash parameters if present from previous redirects to prevent future loop errors
+  if (
+    typeof window !== "undefined" &&
+    window.location.hash &&
+    (window.location.hash.includes("state=") || window.location.hash.includes("code="))
+  ) {
+    try {
+      window.history.replaceState(
+        null,
+        document.title,
+        window.location.pathname + window.location.search
+      );
+    } catch (e) {
+      console.error("Failed to clear hash from URL:", e);
     }
   }
 

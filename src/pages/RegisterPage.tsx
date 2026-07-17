@@ -44,14 +44,15 @@ export default function RegisterPage() {
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 rounded-xl bg-white/10"
+          className="w-full p-3 rounded-xl bg-white/10 text-white"
         />
 
         <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 rounded-xl bg-white/10"
+          className="w-full p-3 rounded-xl bg-white/10 text-white"
         />
 
         <input
@@ -59,7 +60,7 @@ export default function RegisterPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 rounded-xl bg-white/10"
+          className="w-full p-3 rounded-xl bg-white/10 text-white"
         />
 
         <button

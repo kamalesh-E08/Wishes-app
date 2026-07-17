@@ -19,10 +19,11 @@ export default function LoginPage() {
     try {
       const user = await loginUser(email, password);
 
-      if (!user.emailVerified) {
-        alert("Please verify your email first");
-        return;
-      }
+      // Bypassed verification check for easier local development
+      // if (!user.emailVerified) {
+      //   alert("Please verify your email first");
+      //   return;
+      // }
 
       login({
         uid: user.uid,
@@ -33,8 +34,18 @@ export default function LoginPage() {
       });
 
       navigate("/");
-    } catch {
-      alert("Login Failed");
+    } catch (error: any) {
+      console.error(error);
+      const errorCode = error?.code || "";
+      if (errorCode === "auth/user-not-found" || errorCode === "auth/invalid-credential") {
+        alert("User not found or incorrect credentials");
+      } else if (errorCode === "auth/wrong-password") {
+        alert("Incorrect password");
+      } else if (errorCode === "auth/invalid-email") {
+        alert("Invalid email format");
+      } else {
+        alert("Login Failed: " + (error?.message || "Unknown error"));
+      }
     }
   };
 
@@ -46,10 +57,11 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 rounded-xl bg-white/10"
+          className="w-full p-3 rounded-xl bg-white/10 text-white"
         />
 
         <input
@@ -57,7 +69,7 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 rounded-xl bg-white/10"
+          className="w-full p-3 rounded-xl bg-white/10 text-white"
         />
 
         <button

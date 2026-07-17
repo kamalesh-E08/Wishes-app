@@ -28,7 +28,30 @@ export const uploadEvents = async (req: Request, res: Response) => {
       });
     }
 
-    const events = rows.map((row: any) => ({
+    // Filter duplicate rows (by Email and Occasion/EventType) inside the excel file
+    const seen = new Set<string>();
+    const uniqueRows = rows.filter((row: any) => {
+      const occasion = row.EventType || row.Occasion || "";
+      const key = `${row.Email}_${occasion}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+
+    // Filter out rows with invalid or missing EventDate/Name/Email
+    const validRows = uniqueRows.filter((row: any) => {
+      return (
+        row.Name &&
+        row.Email &&
+        row.EventDate &&
+        row.EventDate instanceof Date &&
+        !isNaN(row.EventDate.getTime())
+      );
+    });
+
+    const events = validRows.map((row: any) => ({
       userId,
       name: row.Name,
       email: row.Email,
@@ -43,7 +66,14 @@ export const uploadEvents = async (req: Request, res: Response) => {
       status: "pending",
     }));
 
-    console.log(events[0]);
+    console.log(`${events.length} unique events to insert`);
+
+    // Clean up previous manually uploaded events for the user
+    await Event.deleteMany({
+      userId,
+      source: "excel",
+    });
+
     const saved = await Event.insertMany(events);
 
     return res.json({

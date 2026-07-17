@@ -4,7 +4,7 @@ import OneDriveConnection from "../models/OneDriveConnection";
 import { syncOneDriveEvents } from "../services/automation/sync.service";
 import Event from "../models/Event";
 import { parseExcel } from "../services/excel.service";
-import { AuthRequest } from "../middleware/auth";
+import type { AuthRequest } from "../middleware/auth";
 
 export async function importOneDriveExcel(req: AuthRequest, res: Response) {
   try {
@@ -51,15 +51,25 @@ export async function importOneDriveExcel(req: AuthRequest, res: Response) {
     console.log("Downloading Excel...");
     console.log("File Id:", fileId);
 
-    const response = await axios.get(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/content`,
+    console.log("Fetching Excel metadata from Graph API...");
+    const metadataResponse = await axios.get(
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}`,
       {
-        responseType: "arraybuffer",
         headers: {
           Authorization: `Bearer ${msToken}`,
         },
-      },
+      }
     );
+
+    const downloadUrl = metadataResponse.data["@microsoft.graph.downloadUrl"];
+    if (!downloadUrl) {
+      throw new Error("Could not retrieve download URL for the Excel file from Graph API.");
+    }
+
+    console.log("Downloading Excel content...");
+    const response = await axios.get(downloadUrl, {
+      responseType: "arraybuffer",
+    });
 
     console.log("Excel downloaded successfully");
 
@@ -71,7 +81,30 @@ export async function importOneDriveExcel(req: AuthRequest, res: Response) {
 
     console.log(`${rows.length} rows found`);
 
-    const events = rows.map((row: any) => ({
+    // Filter duplicate rows (by Email and Occasion/EventType) inside the excel file
+    const seen = new Set<string>();
+    const uniqueRows = rows.filter((row: any) => {
+      const occasion = row.EventType || row.Occasion || "";
+      const key = `${row.Email}_${occasion}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+
+    // Filter out rows with invalid or missing EventDate/Name/Email
+    const validRows = uniqueRows.filter((row: any) => {
+      return (
+        row.Name &&
+        row.Email &&
+        row.EventDate &&
+        row.EventDate instanceof Date &&
+        !isNaN(row.EventDate.getTime())
+      );
+    });
+
+    const events = validRows.map((row: any) => ({
       userId,
 
       name: row.Name,
@@ -97,7 +130,7 @@ export async function importOneDriveExcel(req: AuthRequest, res: Response) {
       status: "pending",
     }));
 
-    console.log("Saving events...");
+    console.log(`Saving ${events.length} unique events...`);
 
     await Event.deleteMany({
       userId,

@@ -60,15 +60,16 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/events"
+          element={
+            <ProtectedRoute>
+              <EventDashboardPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
-      <Route
-        path="/events"
-        element={
-          <ProtectedRoute>
-            <EventDashboardPage />
-          </ProtectedRoute>
-        }
-      />
     </Routes>
   );
 };

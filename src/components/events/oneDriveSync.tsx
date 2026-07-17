@@ -34,6 +34,7 @@ export default function OneDriveSync() {
   const [accountName, setAccountName] = useState("");
   const [files, setFiles] = useState<any[]>([]);
   const [lastSyncTime, setLastSyncTime] = useState("");
+  const [hasLoadedFiles, setHasLoadedFiles] = useState(false);
 
   const { selectedFile, setSelectedFile, setOneDriveEvents } = useEventStore();
 
@@ -79,7 +80,7 @@ export default function OneDriveSync() {
       await loginToOneDrive();
     } catch (err) {
       console.error(err);
-    } finally {
+      alert("Failed to connect OneDrive");
       setConnecting(false);
     }
   };
@@ -87,6 +88,7 @@ export default function OneDriveSync() {
   const loadFiles = async () => {
     try {
       setLoadingFiles(true);
+      setHasLoadedFiles(false);
 
       const excelFiles = await getExcelFiles();
 
@@ -96,6 +98,7 @@ export default function OneDriveSync() {
         setSelectedFile(excelFiles[0]);
       }
 
+      setHasLoadedFiles(true);
       alert(`${excelFiles.length} Excel file(s) found.`);
     } catch (err) {
       console.error(err);
@@ -231,6 +234,12 @@ Unchanged : ${result.summary.unchanged}`,
           {loadingFiles ? "Loading Files..." : "Load Excel Files"}
         </button>
       </div>
+
+      {hasLoadedFiles && files.length === 0 && (
+        <div className="mt-4 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-200 text-sm leading-relaxed">
+          ⚠️ No Excel files (.xlsx or .xls) found in your OneDrive root folder. Please upload a template file to OneDrive first.
+        </div>
+      )}
 
       {files.length > 0 && (
         <div className="mt-6">
