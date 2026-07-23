@@ -5,7 +5,7 @@ export default function CustomMessage() {
 
   return (
     <div className="mt-8">
-      <label className="block mb-2">Greeting Message</label>
+      <label className="block mb-2 text-slate-700 font-bold text-sm">Greeting Message</label>
 
       <textarea
         rows={4}
@@ -14,12 +14,21 @@ export default function CustomMessage() {
         placeholder="Happy Birthday Dad ❤️"
         className="
         w-full
-        bg-white/5
+        bg-slate-50
         border
-        border-white/10
+        border-slate-200
+        text-slate-850
+        placeholder-slate-400
+        focus:bg-white
+        focus:border-teal-500
+        focus:ring-2
+        focus:ring-teal-500/20
+        transition-all
         rounded-xl
         p-4
         outline-none
+        font-medium
+        text-sm
         "
       />
     </div>

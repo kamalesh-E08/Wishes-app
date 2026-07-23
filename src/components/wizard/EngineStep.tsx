@@ -1,80 +1,47 @@
+import { useEventStore } from "../../store/eventStore";
 import { useWishStore } from "../../store/wishesStore";
 
-const engines = [
-  {
-    id: "flux",
-    name: "FLUX",
-    available: true,
-    description: "Creative & Detailed",
-  },
-  {
-    id: "gemini",
-    name: "Gemini",
-    available: false,
-    description: "Billing Issue",
-  },
-];
-
 export default function EngineStep() {
+  const { selectedEvent } = useEventStore();
   const { aiEngine, setAIEngine } = useWishStore();
+  
+  const targetName = selectedEvent?.Name || "your contact";
+  const targetEvent = selectedEvent?.EventType?.toLowerCase() || "special occasion";
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {engines.map((engine) => (
-        <button
-          key={engine.id}
-          disabled={!engine.available}
-          onClick={() => setAIEngine(engine.id)}
-          className={`
-            p-8
-            rounded-3xl
-            border
-            relative
-            transition-all
-            duration-300
-
-            ${
-              aiEngine === engine.id
-                ? "border-cyan-500 bg-cyan-500/20 scale-105"
-                : "border-white/10 bg-white/5"
-            }
-
-            ${
-              !engine.available
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:border-cyan-400 hover:bg-white/10"
-            }
-          `}
+    <div>
+      <h2 className="text-xl font-bold text-slate-900 mb-8">Choose an AI provider</h2>
+      
+      <div className="grid md:grid-cols-2 gap-4 mb-10">
+        <div 
+          onClick={() => setAIEngine("gemini")}
+          className={`border-2 rounded-2xl p-6 cursor-pointer shadow-sm relative overflow-hidden transition-colors ${aiEngine === "gemini" ? "border-teal-500 bg-teal-50/10" : "border-slate-200 bg-white hover:border-slate-300"}`}
         >
-          {engine.id === "stability" && (
-            <span
-              className="
-              absolute
-              top-3
-              right-3
-              text-xs
-              px-2
-              py-1
-              rounded-full
-              bg-green-500/20
-              text-green-400
-              "
-            >
-              Recommended
-            </span>
-          )}
+          <div className="flex justify-between items-start mb-2">
+            <h3 className={`font-bold text-sm ${aiEngine === "gemini" ? "text-teal-900" : "text-slate-800"}`}>Gemini</h3>
+            <span className="text-[9px] font-bold text-teal-600 uppercase tracking-widest bg-teal-50 px-2 py-1 rounded-md">RECOMMENDED</span>
+          </div>
+          <p className="text-xs font-medium text-slate-500 leading-relaxed">Cinematic imagery, strong text rendering.</p>
+        </div>
 
-          <h3 className="text-xl font-bold mb-2">{engine.name}</h3>
+        <div 
+          onClick={() => setAIEngine("flux")}
+          className={`border-2 rounded-2xl p-6 cursor-pointer transition-colors shadow-sm relative overflow-hidden ${aiEngine === "flux" ? "border-teal-500 bg-teal-50/10" : "border-slate-200 bg-white hover:border-slate-300"}`}
+        >
+          <div className="flex justify-between items-start mb-2">
+            <h3 className={`font-bold text-sm ${aiEngine === "flux" ? "text-teal-900" : "text-slate-800"}`}>FLUX</h3>
+            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded-md">FAST</span>
+          </div>
+          <p className="text-xs font-medium text-slate-500 leading-relaxed">Painterly, high stylization, fast.</p>
+        </div>
+      </div>
 
-          <p className="text-sm text-white/60">{engine.description}</p>
-
-          {!engine.available && (
-            <span className="block mt-3 text-xs text-yellow-400">
-              Coming Soon
-            </span>
-          )}
-        </button>
-      ))}
+      <div>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Prompt preview</p>
+        <div className="bg-slate-100 rounded-xl p-4 text-xs font-medium text-slate-600 leading-relaxed">
+          Generate a warm, elegant {targetEvent} illustration for <span className="text-teal-600 font-bold">{targetName}</span> in a cinematic style, cinematic light, gentle particles.
+        </div>
+      </div>
     </div>
   );
 }

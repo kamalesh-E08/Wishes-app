@@ -24,12 +24,10 @@ const hasMsalHash = () => {
   );
 };
 
+import AuthProvider from "./components/auth/AuthProvider";
+
 if (isMsalFramed()) {
   if (hasMsalHash()) {
-    // We are inside the MSAL popup/iframe context and we have the authentication hash.
-    // We must run MSAL's redirect promise handler to process the token,
-    // notify the parent window, and close the popup automatically.
-    // However, we do NOT bootstrap React here to avoid loading the entire dashboard.
     initializeMicrosoftAuth()
       .then(() => {
         console.log("MSAL popup/iframe context handled successfully.");
@@ -38,8 +36,6 @@ if (isMsalFramed()) {
         console.error("MSAL popup/iframe context initialization failed:", err);
       });
   } else {
-    // We are inside the popup, but it was just opened (no hash yet).
-    // Do nothing so that the parent window's MSAL can safely set the popup's URL to Microsoft login!
     console.log("MSAL child window opened. Waiting for redirection...");
   }
 } else {
@@ -52,7 +48,9 @@ if (isMsalFramed()) {
       ReactDOM.createRoot(document.getElementById("root")!).render(
         <React.StrictMode>
           <BrowserRouter>
-            <App />
+            <AuthProvider>
+              <App />
+            </AuthProvider>
           </BrowserRouter>
         </React.StrictMode>
       );

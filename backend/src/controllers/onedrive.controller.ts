@@ -40,6 +40,7 @@ export async function importOneDriveExcel(req: AuthRequest, res: Response) {
         fileId,
         fileName,
         syncEnabled: true,
+        accessToken: msToken,
       },
       {
         upsert: true,
@@ -198,6 +199,7 @@ export async function syncOneDrive(req: AuthRequest, res: Response) {
 
     const result = await syncOneDriveEvents(userId, accessToken);
 
+    connection.accessToken = accessToken;
     connection.lastSync = new Date();
 
     await connection.save();
@@ -217,6 +219,62 @@ export async function syncOneDrive(req: AuthRequest, res: Response) {
 
     console.error(error);
 
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+export async function previewOneDriveExcel(req: AuthRequest, res: Response) {
+  try {
+    const userId = req.user?.uid;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    const { fileId } = req.body;
+    if (!fileId) {
+      return res.status(400).json({ success: false, message: "File Id missing" });
+    }
+
+    const msToken = req.headers["x-ms-token"] as string;
+    if (!msToken) {
+      return res.status(400).json({ success: false, message: "Microsoft Access Token missing" });
+    }
+
+    console.log("Fetching Excel metadata for preview...");
+    const metadataResponse = await axios.get(
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}`,
+      { headers: { Authorization: `Bearer ${msToken}` } }
+    );
+
+    const downloadUrl = metadataResponse.data["@microsoft.graph.downloadUrl"];
+    if (!downloadUrl) throw new Error("Could not retrieve download URL for preview.");
+
+    console.log("Downloading Excel content for preview...");
+    const response = await axios.get(downloadUrl, { responseType: "arraybuffer" });
+    const buffer = Buffer.from(response.data);
+
+    console.log("Parsing Excel for preview...");
+    const rows = parseExcel(buffer);
+
+    const previewData = rows.slice(0, 15).map((row: any) => {
+      let formattedDate = "";
+      if (row.EventDate instanceof Date && !isNaN(row.EventDate.getTime())) {
+        formattedDate = row.EventDate.toISOString().split("T")[0];
+      }
+      return {
+        Name: row.Name || row.name || "Unknown",
+        Email: row.Email || row.email || "",
+        EventType: row.EventType || row.Occasion || "Unknown",
+        EventDate: formattedDate || row.EventDate || "",
+        photoUrl: row.PhotoURL || row.photoUrl || null
+      }
+    });
+
+    return res.json(previewData);
+  } catch (error: any) {
+    console.error("PREVIEW FAILED", error.message);
     return res.status(500).json({
       success: false,
       message: error.message,

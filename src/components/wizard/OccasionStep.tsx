@@ -22,12 +22,13 @@ export default function OccasionStep() {
             rounded-3xl
             border
             cursor-pointer
-            transition
-
+            transition-all
+            font-bold
+            text-base
             ${
               occasion === item
-                ? "border-purple-500 ring-2 ring-purple-500 bg-purple-500/20"
-                : "border-white/10 bg-white/5"
+                ? "border-teal-500 ring-2 ring-teal-500/20 bg-teal-50/50 text-teal-800"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-350 shadow-sm"
             }
           `}
         >

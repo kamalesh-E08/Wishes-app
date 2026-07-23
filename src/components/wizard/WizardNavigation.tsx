@@ -1,56 +1,35 @@
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useWishStore } from "../../store/wishesStore";
 
 export default function WizardNavigation() {
-  const { currentStep, uploadedImage, occasion, theme, setCurrentStep } =
-    useWishStore();
-  const navigate = useNavigate();
+  const { currentStep, nextStep, prevStep } = useWishStore();
 
-  const canContinue = () => {
-    switch (currentStep) {
-      case 1:
-        return !!uploadedImage;
-
-      case 2:
-        return !!occasion;
-
-      case 3:
-        return !!theme;
-
-      default:
-        return true;
-    }
-  };
-
-  const next = () => {
-    if (currentStep < 7) setCurrentStep(currentStep + 1);
-
-    if (currentStep === 7) navigate("/preview");
-  };
-
-  const prev = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
+  const totalSteps = 9;
 
   return (
-    <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mt-8">
+    <div className="flex justify-between items-center mt-10">
       <button
-        onClick={prev}
-        className="px-4 py-2 sm:px-6 sm:py-3 rounded-xl bg-white/10 w-full sm:w-auto"
+        onClick={prevStep}
+        disabled={currentStep === 1}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+          currentStep === 1
+            ? "text-slate-300 cursor-not-allowed"
+            : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+        }`}
       >
-        Previous
+        <ArrowLeft size={14} /> Back
       </button>
 
       <button
-        disabled={!canContinue()}
-        onClick={next}
-        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl w-full sm:w-auto ${
-          canContinue()
-            ? "bg-gradient-to-r from-purple-500 to-cyan-500"
-            : "bg-gray-700 cursor-not-allowed"
+        onClick={nextStep}
+        disabled={currentStep === totalSteps}
+        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm ${
+          currentStep === totalSteps
+            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+            : "bg-slate-900 hover:bg-slate-800 text-white"
         }`}
       >
-        Next
+        Next <ArrowRight size={14} />
       </button>
     </div>
   );

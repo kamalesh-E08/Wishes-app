@@ -8,8 +8,9 @@ export default function PreviewCanvas() {
       className="
       rounded-3xl
       border
-      border-white/10
-      bg-white/5
+      border-slate-200/60
+      bg-white
+      shadow-sm
 
       flex
       items-center
@@ -32,9 +33,9 @@ export default function PreviewCanvas() {
           rounded-3xl
           overflow-hidden
 
-          bg-black/20
+          bg-slate-50
           border
-          border-white/10
+          border-slate-200/60
 
           flex
           items-center
@@ -55,7 +56,8 @@ export default function PreviewCanvas() {
       ) : (
         <div
           className="
-          text-white/50
+          text-slate-400
+          font-medium
           text-lg
           "
         >

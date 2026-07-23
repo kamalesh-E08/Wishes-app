@@ -9,6 +9,8 @@ export interface IOneDriveConnection extends Document {
 
   syncEnabled: boolean;
 
+  accessToken?: string;
+
   lastSync?: Date;
 
   createdAt: Date;
@@ -38,6 +40,8 @@ const OneDriveConnectionSchema = new Schema(
       type: Boolean,
       default: true,
     },
+
+    accessToken: String,
 
     lastSync: Date,
   },

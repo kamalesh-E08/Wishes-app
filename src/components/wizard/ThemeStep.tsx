@@ -27,15 +27,14 @@ export default function ThemeStep() {
             cursor-pointer
             transition-all
             border
-
             ${
               theme === item
-                ? "border-purple-500 ring-2 ring-purple-500 bg-purple-500/20"
-                : "border-white/10 bg-white/5 hover:border-purple-400"
+                ? "border-teal-500 ring-2 ring-teal-500/20 bg-teal-50/50 text-teal-800"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-teal-550/40 hover:text-teal-650 hover:shadow-sm"
             }
           `}
         >
-          <h3 className="text-lg sm:text-xl font-semibold">{item}</h3>
+          <h3 className="text-lg sm:text-xl font-bold">{item}</h3>
         </div>
       ))}
     </div>

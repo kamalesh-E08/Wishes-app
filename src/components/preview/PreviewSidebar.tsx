@@ -13,12 +13,13 @@ export default function PreviewSidebar() {
       className="
       rounded-3xl
       border
-      border-white/10
-      bg-white/5
+      border-slate-200/60
+      bg-white
       p-6
+      shadow-sm
       "
     >
-      <h2 className="text-2xl font-bold mb-6">Wish Summary</h2>
+      <h2 className="text-xl font-bold text-slate-850 mb-6">Wish Summary</h2>
 
       <SummaryItem label="Occasion" value={store.occasion} />
 
@@ -41,9 +42,9 @@ export default function PreviewSidebar() {
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="mb-4">
-      <p className="text-white/50 text-sm">{label}</p>
+      <p className="text-slate-500 font-semibold text-xs uppercase tracking-wider">{label}</p>
 
-      <p className="font-medium">{value || "-"}</p>
+      <p className="font-bold text-slate-800 text-sm mt-0.5">{value || "-"}</p>
     </div>
   );
 }

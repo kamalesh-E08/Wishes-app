@@ -35,6 +35,8 @@ interface WishState {
   setAIEngine: (engine: string) => void;
 
   setCurrentStep: (step: number) => void;
+  nextStep: () => void;
+  prevStep: () => void;
 
   resetWish: () => void;
 }
@@ -58,7 +60,7 @@ export const useWishStore = create<WishState>()(
 
       animationEnabled: false,
 
-      aiEngine: "flux",
+      aiEngine: "gemini",
 
       currentStep: 1,
 
@@ -113,6 +115,16 @@ export const useWishStore = create<WishState>()(
         set({
           currentStep: step,
         }),
+        
+      nextStep: () =>
+        set((state) => ({
+          currentStep: state.currentStep < 9 ? state.currentStep + 1 : state.currentStep,
+        })),
+        
+      prevStep: () =>
+        set((state) => ({
+          currentStep: state.currentStep > 1 ? state.currentStep - 1 : state.currentStep,
+        })),
 
       setGeneratedImage: (url) =>
         set({
@@ -131,7 +143,7 @@ export const useWishStore = create<WishState>()(
           animationEnabled: false,
           currentStep: 1,
           generatedImage: null,
-          aiEngine: "",
+          aiEngine: "gemini",
         }),
     }),
     {

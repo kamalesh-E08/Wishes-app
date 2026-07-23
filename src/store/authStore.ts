@@ -13,7 +13,7 @@ interface AuthState {
   user: User | null;
 
   login: (user: User) => void;
-
+  updateUser: (updates: Partial<User>) => void;
   logout: () => void;
 }
 
@@ -26,6 +26,11 @@ export const useAuthStore = create<AuthState>()(
         set({
           user,
         }),
+
+      updateUser: (updates) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updates } : null,
+        })),
 
       logout: () =>
         set({

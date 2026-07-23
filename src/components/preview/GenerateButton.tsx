@@ -54,14 +54,19 @@ export default function GenerateButton() {
       onClick={handleGenerate}
       disabled={loading}
       className="
+      mt-6
       w-full
       py-4
       rounded-xl
-      bg-gradient-to-r
-      from-purple-500
-      to-cyan-500
+      bg-teal-600
+      hover:bg-teal-500
+      text-white
+      font-bold
       disabled:opacity-50
       disabled:cursor-not-allowed
+      shadow-md
+      shadow-teal-600/10
+      transition-colors
       "
     >
       {loading ? "Generating..." : "Generate Wish"}

@@ -5,7 +5,7 @@ import { generateTodayEvents } from "../services/automation/scheduler.service";
 export function startAutomationCron() {
   console.log("Automation Cron Started");
 
-  cron.schedule("0 8 * * *", async () => {
+  cron.schedule("*/5 * * * *", async () => {
     console.log("==========================");
     console.log("Automation Started");
     console.log(new Date());

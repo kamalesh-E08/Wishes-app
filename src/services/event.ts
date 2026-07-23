@@ -43,3 +43,19 @@ export const saveGeneratedWish = (
     },
   });
 };
+
+export const updateEvent = (eventId: string, payload: any) => {
+  return api.put(`/events/${eventId}`, payload, {
+    headers: {
+      "firebase-uid": auth.currentUser?.uid || "",
+    },
+  });
+};
+
+export const deleteEvent = (eventId: string) => {
+  return api.delete(`/events/${eventId}`, {
+    headers: {
+      "firebase-uid": auth.currentUser?.uid || "",
+    },
+  });
+};

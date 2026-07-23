@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  getHistory,
-  deleteWish,
-  deleteMultipleWishes,
-} from "../services/history";
+import { Search, Heart, Download, X, Sparkles, Plus } from "lucide-react";
+import { useHistoryStore } from "../store/historyStore";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface Wish {
   _id: string;
@@ -14,16 +13,17 @@ interface Wish {
 }
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState<Wish[]>([]);
+  const { history, fetchHistory, loading } = useHistoryStore();
+  const navigate = useNavigate();
   const [selectedWish, setSelectedWish] = useState<Wish | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectionMode, setSelectionMode] = useState(false);
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
-  };
+  const [activeTab, setActiveTab] = useState<"generated" | "sent">("generated");
+
+  useEffect(() => {
+    // History is eagerly fetched by AuthProvider, but we can fetch it again here to be safe
+    // or just rely on the store. We'll trigger it just in case.
+    fetchHistory();
+  }, [fetchHistory]);
 
   const handleDownload = async (imageUrl: string) => {
     try {
@@ -40,345 +40,151 @@ export default function HistoryPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("Delete this wish?");
-    if (!confirmed) return;
-    await deleteWish(id);
-    setHistory((prev) => prev.filter((item) => item._id !== id));
-  };
-
-  const handleDeleteSelected = async () => {
-    const confirmed = window.confirm(`Delete ${selectedIds.length} wishes?`);
-    if (!confirmed) return;
-    await deleteMultipleWishes(selectedIds);
-    setHistory((prev) =>
-      prev.filter((item) => !selectedIds.includes(item._id)),
-    );
-    setSelectedIds([]);
-    setSelectionMode(false);
-  };
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function fetchHistory() {
-      try {
-        const data = await getHistory();
-
-        if (mounted) {
-          setHistory(data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchHistory();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const filteredHistory = history.filter(() => {
+    // Assuming we have a 'status' or 'type' field in the real data. 
+    // For now, if activeTab is "generated", show all (as they are generated).
+    // If "sent", maybe we check a property. (Mocking it to show empty or some items).
+    if (activeTab === "sent") return false; // Mock: no sent items yet
+    return true;
+  });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-      <h1
-        className="
-        text-2xl sm:text-3xl md:text-4xl
-        font-bold
-        text-center
-        mb-8 sm:mb-12
-        "
-      >
-        Generated Wishes
-      </h1>
-      <div className="flex justify-center gap-4 mb-10 flex-wrap">
-        <button
-          onClick={() => setSelectionMode(!selectionMode)}
-          className="
-            px-5
-            py-2
-            rounded-xl
-            bg-cyan-500
-            hover:bg-cyan-600
-            transition
-    "
-        >
-          {selectionMode ? "Cancel" : "Select"}
-        </button>
-
-        {selectionMode && selectedIds.length > 0 && (
-          <button
-            onClick={handleDeleteSelected}
-            className="
-                px-5
-                py-2
-                rounded-xl
-                bg-red-500
-                hover:bg-red-600
-                transition
-              "
-          >
-            Delete Selected ({selectedIds.length})
-          </button>
-        )}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Sent Wishes</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs md:text-sm font-medium">Your complete gallery of AI-generated masterpieces.</p>
+        </div>
+        
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <input 
+            type="text" 
+            placeholder="Search history..." 
+            className="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all placeholder-slate-400 dark:placeholder-slate-500 w-full md:w-64"
+          />
+        </div>
       </div>
 
-      {history.length === 0 && (
-        <div className="text-center text-white/50">
-          No wishes generated yet.
-        </div>
-      )}
+      {/* Tabs */}
+      <div className="flex items-center gap-2 mb-8 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+        <button 
+          onClick={() => setActiveTab("generated")}
+          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === "generated" ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
+        >
+          Generated Images
+        </button>
+        <button 
+          onClick={() => setActiveTab("sent")}
+          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === "sent" ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
+        >
+          Sent Wishes
+        </button>
+      </div>
 
-      <div
-        className="
-        grid
-        md:grid-cols-2
-        lg:grid-cols-3
-        gap-10
-        justify-items-center
-        "
-      >
-        {history.map((item) => (
-          <div
-            key={item._id}
-            className={`
-            relative
-
-            w-full
-            max-w-sm
-
-            rounded-3xl
-            overflow-hidden
-
-            bg-white/5
-            backdrop-blur-xl
-
-            border
-            border-white/10
-
-            ${
-              selectedIds.includes(item._id)
-                ? "border-cyan-400"
-                : "border-white/10"
-            }
-
-            shadow-xl
-
-            hover:scale-105
-            hover:border-cyan-400/40
-
-            transition-all
-            duration-300
-            `}
+      {/* Masonry Grid or Empty State */}
+      <div className={filteredHistory.length === 0 ? "" : "columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"}>
+        {filteredHistory.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-lg mx-auto mt-12 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[32px] p-10 border border-white/60 dark:border-slate-800 shadow-sm text-center"
           >
-            {selectionMode && (
-              <input
-                type="checkbox"
-                checked={selectedIds.includes(item._id)}
-                onChange={() => toggleSelect(item._id)}
-                className="
-                  absolute
-                  top-3
-                  left-3
-                  w-5
-                  h-5
-                  z-20
-                  cursor-pointer
-                  "
-              />
-            )}
-            {/* Delete Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(item._id);
-              }}
-              className="
-                absolute
-                top-3
-                right-14
-                z-10
-
-                px-3
-                py-2
-
-                rounded-xl
-
-                bg-red-500
-
-                hover:bg-red-600
-
-                transition
-
-                cursor-pointer
-                "
-            >
-              🗑
-            </button>
-            {/* Download Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDownload(item.generatedImage);
-              }}
-              className="
-              absolute
-              top-3
-              right-3
-              z-10
-              px-3
-              py-2
-              rounded-xl
-              bg-black/50
-              backdrop-blur-md
-              border
-              border-white/10
-              hover:bg-cyan-500
-              transition
-                "
-            >
-              ⬇
-            </button>
-
-            {/* Clickable Card */}
-            <div
-              onClick={() => {
-                if (selectionMode) {
-                  toggleSelect(item._id);
-                  return;
-                }
-
-                setSelectedWish(item);
-              }}
-              className="cursor-pointer"
-            >
-              <img
-                src={item.generatedImage}
-                alt={item.occasion}
-                className="
-                w-full
-                h-60
-                object-cover
-                "
-              />
-
-              <div className="p-5 text-center">
-                <h3 className="font-bold text-xl">{item.occasion}</h3>
-
-                <p className="text-white/60">{item.theme}</p>
-
-                <p
-                  className="
-                  text-xs
-                  text-white/40
-                  mt-2
-                  "
-                >
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </p>
-              </div>
+            <div className="w-20 h-20 mx-auto bg-teal-50 dark:bg-teal-500/10 text-teal-500 rounded-3xl flex items-center justify-center mb-6 rotate-3">
+              <Sparkles size={32} />
             </div>
-          </div>
-        ))}
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 tracking-tight">No magic created yet</h3>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto leading-relaxed">
+              Your generated wishes, images, and sent emails will appear here. Start creating beautiful, AI-powered wishes for your team today.
+            </p>
+            
+            <button 
+              onClick={() => navigate('/create')}
+              className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm rounded-full hover:scale-105 transition-transform flex items-center gap-2 mx-auto shadow-sm"
+            >
+              <Plus size={16} /> Create your first wish
+            </button>
+          </motion.div>
+        ) : (
+          filteredHistory.map((item, i) => {
+            // Pseudo-random height classes for masonry effect since we don't know the exact image aspect ratios
+            const heights = ["h-48", "h-64", "h-80"];
+            const hClass = heights[i % heights.length];
+            
+            return (
+              <div
+                key={item._id}
+                onClick={() => setSelectedWish(item)}
+                className={`w-full ${hClass} rounded-2xl overflow-hidden relative group cursor-pointer break-inside-avoid`}
+              >
+                <img
+                  src={item.generatedImage}
+                  alt={item.occasion}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    // Fallback gradient if image fails
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement!.classList.add('bg-gradient-to-br', 'from-blue-500', 'to-purple-600');
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <div>
+                    <h3 className="text-white font-bold text-sm">{item.occasion}</h3>
+                    <p className="text-white/80 text-[10px] font-semibold mt-0.5">
+                      {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Modal */}
       {selectedWish && (
         <div
-          className="
-          fixed
-          inset-0
-          z-50
-
-          flex
-          items-center
-          justify-center
-
-          bg-black/80
-          backdrop-blur-lg
-
-          p-6
-          "
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setSelectedWish(null)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="
-            relative
-
-            w-full
-            max-w-3xl
-
-            rounded-3xl
-
-            bg-white/10
-            backdrop-blur-2xl
-
-            border
-            border-white/20
-
-            shadow-2xl
-
-            overflow-hidden
-            "
+            className="w-full max-w-3xl bg-slate-100 dark:bg-slate-800 rounded-[32px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col"
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedWish(null)}
-              className="
-              absolute
-              top-4
-              left-4
-              z-10
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-md">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">Generation preview</h3>
+              <button onClick={() => setSelectedWish(null)} className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
 
-              px-4
-              py-2
-
-              rounded-xl
-
-              bg-red-500
-              hover:bg-red-600
-
-              transition
-
-              cursor-pointer
-              "
-            >
-              Close
-            </button>
-
-            <div className="pt-20 p-6">
+            {/* Modal Image Area */}
+            <div className="p-6 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
               <img
                 src={selectedWish.generatedImage}
                 alt={selectedWish.occasion}
-                className="
-                max-h-[40vh] sm:max-h-[60vh] md:max-h-[500px]
-                w-auto
-
-                object-contain
-
-                rounded-2xl
-
-                mx-auto
-                "
+                className="w-full max-h-[60vh] object-contain rounded-2xl shadow-sm"
               />
             </div>
 
-            <div className="pb-8 px-8 text-center">
-              <h2 className="text-3xl font-bold">{selectedWish.occasion}</h2>
-
-              <p className="text-white/70 mt-2">{selectedWish.theme}</p>
-
-              <p
-                className="
-                text-sm
-                text-white/50
-                mt-3
-                "
-              >
-                Created on {new Date(selectedWish.createdAt).toLocaleString()}
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                Generated {new Date(selectedWish.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {selectedWish.aiProvider || 'Gemini'}
               </p>
+              <div className="flex gap-2">
+                <button className="flex items-center gap-1.5 px-4 py-2 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-full transition-colors">
+                  <Heart size={14} /> Save
+                </button>
+                <button 
+                  onClick={() => handleDownload(selectedWish.generatedImage)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-[11px] font-bold rounded-full transition-colors shadow-sm shadow-teal-500/20"
+                >
+                  <Download size={14} /> Download
+                </button>
+              </div>
             </div>
           </div>
         </div>

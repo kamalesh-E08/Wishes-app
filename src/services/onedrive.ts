@@ -51,6 +51,27 @@ export const importOneDriveExcel = async (fileId: string, fileName: string) => {
   return response.data;
 };
 
+/**
+ * Preview selected Excel file
+ */
+export const previewOneDriveExcel = async (fileId: string) => {
+  const microsoftToken = await getAccessToken();
+
+  const response = await api.post(
+    "/onedrive/preview",
+    {
+      fileId,
+    },
+    {
+      headers: {
+        "x-ms-token": microsoftToken,
+      },
+    },
+  );
+
+  return response.data;
+};
+
 /*
 ---------------------------------------
 Manual Sync

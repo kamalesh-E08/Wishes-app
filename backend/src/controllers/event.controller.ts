@@ -188,3 +188,54 @@ export const saveGeneratedWish = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const updateEvent = async (req: Request, res: Response) => {
+  try {
+    const { eventId } = req.params;
+    const updateData = req.body;
+    
+    // Validate user
+    const userId = req.headers["firebase-uid"];
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not authenticated" });
+    }
+
+    const event = await Event.findOneAndUpdate(
+      { _id: eventId, userId },
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+};
+
+export const deleteEvent = async (req: Request, res: Response) => {
+  try {
+    const { eventId } = req.params;
+    
+    // Validate user
+    const userId = req.headers["firebase-uid"];
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not authenticated" });
+    }
+
+    const event = await Event.findOneAndDelete({ _id: eventId, userId });
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    res.json({ success: true, message: "Event deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+};

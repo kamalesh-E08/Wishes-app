@@ -20,26 +20,33 @@ export default function DecorationStep() {
   };
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {decorationsList.map((item) => (
-        <button
-          key={item}
-          onClick={() => toggleDecoration(item)}
-          className={`
-            p-8
-            rounded-3xl
-            border
-            transition
-            ${
-              decorations.includes(item)
-                ? "border-purple-500 bg-purple-500/20"
-                : "border-white/10 bg-white/5"
-            }
-          `}
-        >
-          {item}
-        </button>
-      ))}
+    <div>
+      <h2 className="text-xl font-bold text-slate-900 mb-8">Add decorations</h2>
+      <div className="grid md:grid-cols-3 gap-6">
+        {decorationsList.map((item) => (
+          <button
+            key={item}
+            onClick={() => toggleDecoration(item)}
+            className={`
+              p-6
+              rounded-xl
+              border
+              transition-all
+              font-bold
+              text-base
+              cursor-pointer
+              shadow-sm
+              ${
+                decorations.includes(item)
+                  ? "border-slate-900 bg-slate-900 text-white"
+                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+              }
+            `}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

@@ -36,6 +36,8 @@ interface EventStore {
   setActiveSource: (source: "manual" | "onedrive") => void;
   setSelectedEvent: (event: EventRecord | null) => void;
   setGeneratedPreview: (url: string) => void;
+  updateEvent: (id: string, updatedEvent: Partial<EventRecord>) => void;
+  deleteEvent: (id: string) => void;
 }
 
 export const useEventStore = create<EventStore>()(
@@ -88,6 +90,24 @@ export const useEventStore = create<EventStore>()(
       setGeneratedPreview: (url) =>
         set({
           generatedPreview: url,
+        }),
+        
+      updateEvent: (id: string, updatedEvent: Partial<EventRecord>) => 
+        set((state) => {
+          const updateList = (list: EventRecord[]) => list.map(e => e._id === id ? { ...e, ...updatedEvent } : e);
+          return {
+            manualEvents: updateList(state.manualEvents),
+            oneDriveEvents: updateList(state.oneDriveEvents)
+          };
+        }),
+        
+      deleteEvent: (id: string) => 
+        set((state) => {
+          const filterList = (list: EventRecord[]) => list.filter(e => e._id !== id);
+          return {
+            manualEvents: filterList(state.manualEvents),
+            oneDriveEvents: filterList(state.oneDriveEvents)
+          };
         }),
 
       clearEvents: () =>

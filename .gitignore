@@ -33,3 +33,13 @@ backend/.env
 
 # Generated uploads
 backend/uploads/    
+
+# Skills
+.agent
+.agents
+
+# test
+test-results
+test-results.json
+tests
+playwright-report

@@ -1,10 +1,27 @@
 import Event from "../../models/Event";
-
+import OneDriveConnection from "../../models/OneDriveConnection";
+import { syncOneDriveEvents } from "./sync.service";
 import { generateEventWish } from "./automation.service";
-
 import { sendWishMail } from "../email/sendWishMail";
 
 export async function generateTodayEvents() {
+  // Sync connected OneDrive Excel sheets before processing events
+  try {
+    const activeConnections = await OneDriveConnection.find({ syncEnabled: true });
+    for (const connection of activeConnections) {
+      if (connection.accessToken) {
+        try {
+          console.log(`Auto-syncing OneDrive file "${connection.fileName}"...`);
+          await syncOneDriveEvents(connection.userId, connection.accessToken);
+        } catch (syncErr: any) {
+          console.error(`Auto-sync failed for ${connection.fileName}:`, syncErr?.message || syncErr);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error during OneDrive auto-sync:", err);
+  }
+
   const today = new Date();
 
   const month = today.getMonth() + 1;

@@ -54,21 +54,24 @@ export default function EventStats() {
           <div
             key={item.label}
             className="
-              bg-white/5
+              bg-white dark:bg-slate-900
               border
-              border-white/10
+              border-slate-200/60 dark:border-slate-800
               rounded-2xl
               p-4 sm:p-6
+              shadow-sm
+              hover:shadow-md
+              transition-all
             "
           >
             <div className="flex justify-between">
               <div>
-                <p className="text-gray-400 text-sm">{item.label}</p>
+                <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm">{item.label}</p>
 
-                <h2 className="text-3xl font-bold mt-2">{item.value}</h2>
+                <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-2">{item.value}</h2>
               </div>
 
-              <Icon className="text-purple-400" />
+              <Icon className="text-teal-600 dark:text-teal-400" />
             </div>
           </div>
         );

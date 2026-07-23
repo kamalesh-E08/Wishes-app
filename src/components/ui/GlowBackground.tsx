@@ -10,6 +10,9 @@ const GlowBackground = () => {
         h-full
         -z-10
         overflow-hidden
+        bg-[#FAF9F6]
+        dark:bg-slate-950
+        transition-colors
         "
       >
         <div
@@ -17,10 +20,10 @@ const GlowBackground = () => {
           absolute
           top-20
           left-20
-          w-72
-          h-72
-          bg-purple-500/20
-          blur-[120px]
+          w-[500px]
+          h-[500px]
+          bg-teal-500/5
+          blur-[130px]
           rounded-full
           "
         />
@@ -30,10 +33,10 @@ const GlowBackground = () => {
           absolute
           right-20
           bottom-20
-          w-72
-          h-72
-          bg-cyan-500/20
-          blur-[120px]
+          w-[500px]
+          h-[500px]
+          bg-emerald-500/5
+          blur-[130px]
           rounded-full
           "
         />
