@@ -1,8 +1,10 @@
 import { Search, Bell, Command, History, Settings, CheckCheck, Sparkles, Mail, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useHistoryStore } from "../../store/historyStore";
+import { useEventStore } from "../../store/eventStore";
 
 export default function Topbar() {
   const { user } = useAuthStore();
@@ -17,40 +19,53 @@ export default function Topbar() {
     .substring(0, 2)
     .toUpperCase();
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Automated Email Sent",
-      desc: "Birthday wish sent to Ancil",
-      time: "10m ago",
-      read: false,
-      icon: Mail,
-      color: "text-teal-500 bg-teal-50 dark:bg-teal-950/40",
-    },
-    {
-      id: 2,
-      title: "OneDrive Excel Synced",
-      desc: "Latest employee celebration events synced",
-      time: "25m ago",
-      read: false,
-      icon: Sparkles,
-      color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40",
-    },
-    {
-      id: 3,
-      title: "AI Generation Ready",
-      desc: "Flux & Gemini 1.5 engines ready",
-      time: "1h ago",
-      read: true,
-      icon: CheckCircle2,
-      color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40",
-    },
-  ]);
+  const { history } = useHistoryStore();
+  const { manualEvents, oneDriveEvents } = useEventStore();
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+
+  const notifications = useMemo(() => {
+    const notifs: any[] = [];
+    const allEvents = [...manualEvents, ...oneDriveEvents];
+    
+    // Add sent emails
+    const sentEvents = allEvents.filter(e => e.status === 'sent');
+    sentEvents.forEach((e, i) => {
+      notifs.push({
+        id: `email-${e._id || i}`,
+        title: "Automated Email Sent",
+        desc: `Wish sent to ${e.Name || e.email}`,
+        time: e.generatedAt ? new Date(e.generatedAt).toLocaleDateString() : 'Recently',
+        icon: Mail,
+        color: "text-teal-500 bg-teal-50 dark:bg-teal-950/40",
+        date: new Date(e.generatedAt || e.EventDate || Date.now())
+      });
+    });
+
+    // Add recent generations
+    history.forEach((h, i) => {
+      notifs.push({
+        id: `gen-${h._id || i}`,
+        title: "AI Generation Ready",
+        desc: `Generated ${h.occasion} wish`,
+        time: h.createdAt ? new Date(h.createdAt).toLocaleDateString() : 'Recently',
+        icon: Sparkles,
+        color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40",
+        date: new Date(h.createdAt || Date.now())
+      });
+    });
+
+    // Sort by date descending
+    notifs.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    return notifs.slice(0, 5).map(n => ({ ...n, read: readIds.has(n.id) }));
+  }, [manualEvents, oneDriveEvents, history, readIds]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    const newReadIds = new Set(readIds);
+    notifications.forEach(n => newReadIds.add(n.id));
+    setReadIds(newReadIds);
   };
 
   // Close popover when clicking outside

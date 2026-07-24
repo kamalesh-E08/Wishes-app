@@ -16,6 +16,7 @@ import ExcelImportPage from "../pages/ExcelImportPage";
 import OneDrivePage from "../pages/OneDrivePage";
 import ProfilePage from "../pages/ProfilePage";
 import SettingsPage from "../pages/SettingsPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -83,6 +84,9 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
       </Route>
+
+      {/* Catch-all 404 Route */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

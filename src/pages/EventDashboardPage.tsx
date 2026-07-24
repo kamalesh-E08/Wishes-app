@@ -7,6 +7,7 @@ import AddEventModal from "../components/events/AddEventModal";
 export default function EventDashboardPage() {
   const { setManualEvents, setOneDriveEvents } = useEventStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const normalizeEvents = (events: any[]) =>
     events.map((event) => ({
@@ -33,6 +34,8 @@ export default function EventDashboardPage() {
       setOneDriveEvents(normalizeEvents(onedrive.data));
     } catch (error) {
       console.error("Failed to load events", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [setManualEvents, setOneDriveEvents]);
 
@@ -58,9 +61,16 @@ export default function EventDashboardPage() {
       </div>
 
       {/* Main Table Content */}
-      <div className="bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200/60 dark:border-slate-800 shadow-sm overflow-hidden scrollbar-slim">
-        <ImportedEventsTable />
-      </div>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] bg-white dark:bg-slate-800 rounded-[32px] border border-slate-200 dark:border-slate-700">
+          <div className="w-12 h-12 border-4 border-slate-200 dark:border-slate-700 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">Loading events...</p>
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200/60 dark:border-slate-800 shadow-sm overflow-hidden scrollbar-slim">
+          <ImportedEventsTable />
+        </div>
+      )}
 
       {/* Add Event Modal */}
       <AddEventModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

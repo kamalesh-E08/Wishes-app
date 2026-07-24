@@ -10,6 +10,7 @@ interface Wish {
   theme: string;
   generatedImage: string;
   createdAt: string;
+  aiProvider?: string;
 }
 
 export default function HistoryPage() {
@@ -83,8 +84,14 @@ export default function HistoryPage() {
         </button>
       </div>
 
-      {/* Masonry Grid or Empty State */}
-      <div className={filteredHistory.length === 0 ? "" : "columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"}>
+      {/* Masonry Grid, Loading State, or Empty State */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh]">
+          <div className="w-12 h-12 border-4 border-slate-200 dark:border-slate-700 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">Loading your history...</p>
+        </div>
+      ) : (
+        <div className={filteredHistory.length === 0 ? "" : "columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"}>
         {filteredHistory.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -141,6 +148,7 @@ export default function HistoryPage() {
           })
         )}
       </div>
+      )}
 
       {/* Modal */}
       {selectedWish && (

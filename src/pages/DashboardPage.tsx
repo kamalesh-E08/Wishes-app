@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const resetWish = useWishStore(state => state.resetWish);
   const navigate = useNavigate();
   const [aiTab, setAiTab] = useState<'Gemini' | 'Flux'>('Gemini');
+  const [isLoading, setIsLoading] = useState(true);
 
   const normalizeEvents = useCallback((events: any[]) =>
     events.map((event) => ({
@@ -46,6 +47,8 @@ export default function DashboardPage() {
       setOneDriveEvents(normalizeEvents(onedrive.data));
     } catch (error) {
       console.error("Failed to load events", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [setManualEvents, setOneDriveEvents, normalizeEvents]);
 
@@ -54,6 +57,8 @@ export default function DashboardPage() {
     fetchHistory();
     if (manualEvents.length === 0 && oneDriveEvents.length === 0) {
       loadEvents();
+    } else {
+      setIsLoading(false);
     }
   }, [fetchHistory, loadEvents, manualEvents.length, oneDriveEvents.length]);
 
@@ -163,13 +168,22 @@ export default function DashboardPage() {
     return name.substring(0, 2).toUpperCase();
   };
 
-  const handleNewGeneration = () => {
+  const handleCreateNewWish = () => {
     resetWish();
     navigate('/create');
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-slate-200 dark:border-slate-700 border-t-indigo-600 rounded-full animate-spin"></div>
+        <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">Loading your dashboard...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-700">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -179,12 +193,12 @@ export default function DashboardPage() {
           <div>
             <p className="text-slate-500 dark:text-slate-400 font-medium mb-0.5 text-xs md:text-sm">{today}</p>
             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{getGreeting()}, {user?.displayName || firstName}</h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-xs md:text-sm font-medium">Your automations are running smoothly. {upcomingEvents.length} events queued.</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-xs md:text-sm font-medium">Your automations are running smoothly. {upcomingEvents.length} upcoming events.</p>
           </div>
         </div>
         
         <button 
-          onClick={handleNewGeneration}
+          onClick={handleCreateNewWish}
           className="px-3 py-1.5 md:px-4 md:py-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs md:text-sm font-bold rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
           <Sparkles className="w-3 h-3 md:w-4 md:h-4" /> <span className="hidden sm:inline">New generation</span><span className="sm:hidden">New</span>

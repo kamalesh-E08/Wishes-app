@@ -8,6 +8,6 @@ export const msalInstance = new PublicClientApplication({
       import.meta.env.VITE_MS_TENANT_ID
     }`,
 
-    redirectUri: "http://localhost:5173",
+    redirectUri: import.meta.env.VITE_APP_URL || window.location.origin,
   },
 });

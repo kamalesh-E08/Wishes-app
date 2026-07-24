@@ -88,7 +88,7 @@ export const logoutFromOneDrive = async () => {
   await initializeMicrosoftAuth();
 
   await msalInstance.logoutRedirect({
-    postLogoutRedirectUri: "http://localhost:5173/events",
+    postLogoutRedirectUri: import.meta.env.VITE_APP_URL || window.location.origin,
   });
 };
 

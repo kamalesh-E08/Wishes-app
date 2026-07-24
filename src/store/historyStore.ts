@@ -10,6 +10,7 @@ interface Wish {
   aiProvider?: string;
   downloads?: number;
   shares?: number;
+  people?: string[];
 }
 
 interface HistoryState {
